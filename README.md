@@ -1,48 +1,34 @@
-# Serial Pairs
+This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-This is a framework to support the organization of continual work on a project by scheduling a series of overlapping pair programming sessions. Adjacent pairs of developers have an overlap to allow the departing pair to commit all their work & brief the incoming pair of their progress. All work is both streamed and recorded. Participants recieve a base payment for being present for a session and recording a video. That compensation, however, can be more than doubled based on peer review performed either live or on the recording of the event.
+## Getting Started
 
-The goal is to provide a resource for architects who have a reasonably well structured project description, but don't have the resources to build a development organization. Also, the recordings will capture the entire development process for the program, and, when combined with the review metadata should provide interested parties a live "blame" view of the author's thinking for each piece of code.
+First, run the development server:
 
-## Interfaces
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+```
 
-There are three primary interfaces used to orchestrate the endeavor: scheduling, execution, and review.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-### Scheduling
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-A session has at least two participants: the Navigator and the Driver. The Navigator described the code to be written while the Driver operates the keyboard. Pairs apply for sessions by providing a bid that includes:
-* the time period they desire; both windows for start time and duration they would like the driver's seat
-* a set of GitHub issues they intend to address
-* an estimate of the progres they will make
+This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
-The community selects which applicants fill slots via a token-gated voting interface where decisions are ratified in sync with a rolling window. There is a basic participation token that anyone can mint. Beyond that though there are muiltiplier tokens which increase voters' influence. A project has a single primary architect who has the ability to distribute tokens *(and convey the ability for someone else to distribute tokens)*. Tokens can be destroyed via collective action.
+## Learn More
 
-Five days in advance of a slot being worked, bids are chosen both for a worker and an on-call backup to take the session if the selected group doesn't make check-in.
+To learn more about Next.js, take a look at the following resources:
 
-### Execution
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-Once a session is slated to start, an hour before the intended start time, the pair have to check in and signal their continued intention to attempt to satify their bid. At the point they check in, they will recieve stream keys necessary to configure OBS to broadcast their session to the internet where it is captured.
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
-The actual coding will be done via a Discord video chat for screen share, and sources shared using [CodeSandbox](https://codesandbox.io) which allows collaborative editing either in the browser or VS Code.
+## Deploy on Vercel
 
-Once a pair's session starts there is an intial period where they join the previous pair's session. They get a brief of what progress was made, the departing team commits the state of their code, and summarizes their progress.
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-If the departing team is in the midst of a coding push that can be completed within a relatively short period, they can request an extension if the current team agrees to reconvene to do a merge.
-
-### Review
-
-A major component of compensation is based on input from a program that semantically breaks down the video into time periods of events like debugging or new development or testing. Periods when the pair goes off track are recorded as well as events like discovering a solution and writing code that doesn't conform to the syntax standards.
-
-During their session the participants have access to the review interface. Also participants watching via the livestream and then those watching recordings.
-
-As well as an objective description of the events, reviewers are also able to make subjective assessments: both descriptive statements and also weighted terms. It will also be possible to review reviews and rate the veracity of the reviewer.
-
-Reviewers after the fact will have the option of watching the stream in an abbreviated mode where sections unimportant to the progress of development are sped up or skipped entierly.
-
-## Technologies
-
-* Livepeer will be used for steaming the sessions & capturing recordings.
-* Ceramic will be used for storing review information.
-* The FEVM will be used for an ERC-1155 deployed for token-based permissions.
-* IPFS will be used for the storage of video streams.
-* Postgresql will be used for querying bids to determine potential schedules.
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
