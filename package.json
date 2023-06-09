@@ -4,6 +4,9 @@
   "description": "A system for orchestrating & reviewing pair programming sessions.",
   "main": "index.js",
   "scripts": {
+    "hh:balance": "npm --workspace=contracts run balance",
+    "hh:deploy": "npm --workspace=contracts run deploy",
+    "ui:dev": "npm --workspace=ui run dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,5 +18,11 @@
   "bugs": {
     "url": "https://github.com/dysbulic/serial-pairs/issues"
   },
-  "homepage": "https://github.com/dysbulic/serial-pairs#readme"
+  "homepage": "https://github.com/dysbulic/serial-pairs#readme",
+  "workspaces": [
+    "contracts", "ui"
+  ],
+  "resolutions": {
+    "ethers": "6.4.0"
+  }
 }
