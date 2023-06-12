@@ -43,9 +43,12 @@ export default <HardhatUserConfig>{
     deployer: 0,
   },
   paths: {
-    sources: "./src",
-    tests: "./test",
-    cache: "./cache",
-    artifacts: "./artifacts",
+    sources: "src",
+    tests: "tests",
+    cache: "cache",
+    artifacts: "artifacts",
+  },
+  typechain: {
+    outDir: "types",
   },
 }

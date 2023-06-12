@@ -1,0 +1,89 @@
+.menu {
+  --item-width: 11.25ch;
+
+  list-style: none;
+  position: relative;
+
+  & > li > .picButton {
+    position: relative;
+    z-index: 2;
+
+    & input {
+      display: none;
+    }
+  }
+
+  & ul {
+    display: flex;
+    list-style: none;
+
+    & li {
+      position: absolute;
+      top: 0;
+    }
+  }
+
+  & label ~ ul li {
+    left: 0;
+    z-index: 1;
+    transition: left 0.5s ease-in-out;
+  }
+
+  & label:has(input:checked) ~ ul li {
+    &:nth-of-type(1) {
+      left: calc(1 * var(--item-width))
+    }
+    &:nth-of-type(2) {
+      left: calc(2 * var(--item-width))
+    }
+    &:nth-of-type(3) {
+      left: calc(3 * var(--item-width))
+    }
+    &:nth-of-type(4) {
+      left: calc(4 * var(--item-width))
+    }
+    &:nth-of-type(5) {
+      left: calc(5 * var(--item-width))
+    }
+    &:nth-of-type(6) {
+      left: calc(6 * var(--item-width))
+    }
+    &:nth-of-type(7) {
+      left: calc(7 * var(--item-width))
+    }
+  }
+}
+
+.picButton {
+  --bg: orange;
+
+  display: inline-block;
+  background-color: var(--bg);
+  min-width: 8ch;
+  border-radius: 10%;
+  padding: 0.5rem;
+  cursor: pointer;
+
+  &:hover {
+    filter: brightness(1.2);
+  }
+
+  & img {
+    width: 9ch;
+  }
+
+  & .textIcon {
+    font-size: 5rem;
+    background-color: #CCC;
+    border-radius: 15%;
+  }
+
+  & img, & .textIcon {
+    background-color: #CCC;
+    border-radius: 15%;
+  }
+
+  & h2, & h3 {
+    text-align: center;
+  }
+}
