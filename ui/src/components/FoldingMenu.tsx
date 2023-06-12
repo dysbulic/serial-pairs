@@ -1,8 +1,9 @@
 "use client"
 
+import { ButtonInfo } from '@/app/page'
 import styles from './FoldingMenu.module.css'
 
-const Icon = ({ src, alt = '' }) => {
+const Icon = ({ src, alt = '' }: { src: string, alt?: string }) => {
   if(src.includes('.')) {
     return <img {...{ src, alt }}/>
   }
@@ -10,14 +11,28 @@ const Icon = ({ src, alt = '' }) => {
 }
 
 export default function FoldingMenu(
-  { label, icon, bg = 'orange', buttons, elemStyle = {}, onSelect = () => {} }
+  {
+    label,
+    icon,
+    bg = 'orange',
+    buttons,
+    elemStyle = {},
+    onSelect = () => {}
+  }: {
+    label: string
+    icon: string
+    bg?: string
+    buttons: ButtonInfo[]
+    elemStyle?: React.CSSProperties
+    onSelect?: (args: ButtonInfo) => void
+  }
 ) {
   return (
     <ul className={styles.menu}>
       <li>
         <label
           className={styles.picButton}
-          style={{ '--bg': bg }}
+          style={{ '--bg': bg } as React.CSSProperties}
         >
           <Icon src={icon} alt={label}/>
           <h2>{label}</h2>
@@ -34,7 +49,7 @@ export default function FoldingMenu(
               >
                 <div
                   className={styles.picButton}
-                  style={{ '--bg': bg }}
+                  style={{ '--bg': bg } as React.CSSProperties}
                 >
                   <Icon src={icon} alt={label}/>
                   <h3>{label}</h3>

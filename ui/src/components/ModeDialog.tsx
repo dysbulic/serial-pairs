@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from 'react'
+import { FormEvent, useEffect, useRef, useState } from 'react'
 import styles from './ModeDialog.module.css'
 
 export default function ModeDialog(
@@ -11,6 +11,13 @@ export default function ModeDialog(
     time,
     setModeOpen,
     insertMode
+  }: {
+    open?: boolean
+    types: string[]
+    type?: string
+    time: number
+    setModeOpen: (open: boolean) => void
+    insertMode: (args: { id: string, mode: string }) => void
   }
 ) {
   const [type, setType] = useState(selectedType)
@@ -29,9 +36,9 @@ export default function ModeDialog(
     elem?.addEventListener('close', close)
     return () => elem?.removeEventListener('close', close)
   }, [setModeOpen])
-  const submit = (evt) => {
+  const submit = (evt: FormEvent) => {
     evt.preventDefault()
-    const type = evt.target.elements[0].value
+    const { value: type } = (evt.target as HTMLFormElement)?.elements[0] as HTMLInputElement
     console.info({ t: evt.target })
     insertMode({
       id: time.toString(),
@@ -52,7 +59,7 @@ export default function ModeDialog(
               value={type}
               onChange={(evt) => setType(evt.target.value)}
             >
-              {types.map((type) => (
+              {types.map((type: string) => (
                 <option key={type}>{type}</option>
               ))}
             </select>
@@ -62,7 +69,7 @@ export default function ModeDialog(
             <input
               type="number"
               value={time}
-              onChange={({ target: { value }}) => setStart(value)}
+              onChange={({ target: { value }}) => setStart(Number(value))}
             />
           </label>
           <button formAction="dialog">Cancel</button>

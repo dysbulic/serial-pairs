@@ -11,6 +11,17 @@ import ModeDialog from '@/components/ModeDialog'
 //   description: 'Interface for reviewing a pair programming session.',
 // }
 
+export type ButtonInfo = {
+  bg: string
+  icon: string
+  label: string
+}
+
+export type ModeInfo = {
+  id: string
+  mode: string
+}
+
 export default function Home() {
   const modeButtons = [
     { bg: '#016A18', icon: '🖊', label: 'New Work' },
@@ -27,16 +38,16 @@ export default function Home() {
     { bg: '#8399E6', icon: '/stop buffalo.svg', label: 'Wrong Headed' },
     { bg: '#EE410B', icon: '/solutions.svg', label: 'Solution Found' },
   ]
-  const [selectedMode, setSelectedMode] = useState()
+  const [selectedMode, setSelectedMode] = useState<string>()
   const [modeOpen, setModeOpen] = useState(false)
   const [time, setTime] = useState(0)
   const [duration, setDuration] = useState(0)
-  const selected = ({ label }) => {
+  const selected = ({ label }: { label: string }) => {
     setSelectedMode(label)
     setModeOpen(true)
     console.info({ modeOpen })
   }
-  const insertMode = ({ id, mode }) => {
+  const insertMode = ({ id, mode }: ModeInfo) => {
     console.info({ id, mode })
   }
 
@@ -53,7 +64,7 @@ export default function Home() {
           label="Event"
           icon="/gavel.svg"
           buttons={eventButtons}
-          elemStyle={{ '--fg': 'black' }}
+          elemStyle={{ '--fg': 'black' } as React.CSSProperties}
         />
       </aside>
       <TrackedVideo
