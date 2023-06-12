@@ -1,22 +1,70 @@
-import Image from 'next/image'
-import FoldingMenu from '../components/FoldingMenu'
-import styles from './page.module.css'
+"use client"
 
-export const metadata = {
-  title: 'Session Review',
-  description: 'Interface for reviewing a pair programming session.',
-}
+import { useState } from 'react'
+import FoldingMenu from '@/components/FoldingMenu'
+import TrackedVideo from '@/components/TrackedVideo'
+import styles from './page.module.css'
+import ModeDialog from '@/components/ModeDialog'
+
+// export const metadata = {
+//   title: 'Session Review',
+//   description: 'Interface for reviewing a pair programming session.',
+// }
 
 export default function Home() {
+  const modeButtons = [
+    { bg: '#016A18', icon: '🖊', label: 'New Work' },
+    { bg: '#6A0E01', icon: '🐞', label: 'Debugging' },
+    { bg: '#0D1B98', icon: '🥽', label: 'Testing' },
+    { bg: '#A59506', icon: '🗺', label: 'Planning' },
+    { bg: '#06A5A5', icon: '💬', label: 'Chatter' },
+    { bg: '#690E6B', icon: '🏖', label: 'Break' },
+  ]
+  const eventButtons = [
+    { bg: '#24EEBE', icon: '/error.svg', label: 'Standards Error' },
+    { bg: '#BEEE24', icon: '/dead day.svg', label: 'Useless Event' },
+    { bg: '#EE24BA', icon: '/Spartan.svg', label: 'Right Headed' },
+    { bg: '#8399E6', icon: '/stop buffalo.svg', label: 'Wrong Headed' },
+    { bg: '#EE410B', icon: '/solutions.svg', label: 'Solution Found' },
+  ]
+  const [selectedMode, setSelectedMode] = useState()
+  const [modeOpen, setModeOpen] = useState(false)
+  const [time, setTime] = useState(0)
+  const [duration, setDuration] = useState(0)
+  const selected = ({ label }) => {
+    setSelectedMode(label)
+    setModeOpen(true)
+    console.info({ modeOpen })
+  }
+  const insertMode = ({ id, mode }) => {
+    console.info({ id, mode })
+  }
+
   return (
     <main className={styles.main}>
-      <FoldingMenu/>
-      <video className={styles.video} controls>
-        <source
-          src="https://bafybeidasi57n6e7upb3txkm6q5ffgoxhbfevx3ny6nlf5ua63xxfillkm.ipfs.dweb.link/2023%E2%81%8405%E2%81%8423%4019%3A35%3A29%E1%B4%87%E1%B4%9B.Pairing%20With%20%40Duke%20On%20Where's%20Waldo%3F.%E2%80%9203%3A35%3A15.x264.mp4"
-          type="video/mp4"
+      <aside className={styles.sidebar}>
+        <FoldingMenu
+          label="Mode"
+          icon="/lens.svg"
+          buttons={modeButtons}
+          onSelect={selected}
         />
-      </video>
+        <FoldingMenu
+          label="Event"
+          icon="/gavel.svg"
+          buttons={eventButtons}
+          elemStyle={{ '--fg': 'black' }}
+        />
+      </aside>
+      <TrackedVideo
+        {...{ setTime, setDuration}}
+      />
+      <ModeDialog
+        open={modeOpen}
+        {...{ time, setModeOpen, insertMode }}
+        types={modeButtons.map(({ label }) => label)}
+        type={selectedMode}
+      />
     </main>
   )
 }

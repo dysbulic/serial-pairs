@@ -1,5 +1,7 @@
 .menu {
   --item-width: 11.25ch;
+  --fg: white;
+  --bg: orange;
 
   list-style: none;
   position: relative;
@@ -55,14 +57,13 @@
 }
 
 .picButton {
-  --bg: orange;
-
   display: inline-block;
   background-color: var(--bg);
   min-width: 8ch;
   border-radius: 10%;
   padding: 0.5rem;
   cursor: pointer;
+  border: 5px ridge color-mix(in srgb, var(--bg) 100%, black);
 
   &:hover {
     filter: brightness(1.2);
@@ -70,12 +71,12 @@
 
   & img {
     width: 9ch;
+    max-height: 9ch;
+    object-fit: contain;
   }
 
   & .textIcon {
     font-size: 5rem;
-    background-color: #CCC;
-    border-radius: 15%;
   }
 
   & img, & .textIcon {
@@ -85,5 +86,6 @@
 
   & h2, & h3 {
     text-align: center;
+    color: var(--fg);
   }
 }

@@ -1,0 +1,19 @@
+.dialog {
+  & label {
+    display: flex;
+    align-items: center;
+
+    & h1 {
+      text-align: center;
+    }
+
+    & h2 {
+      font-size: 1rem;
+      font-weight: normal;
+    }
+
+    & h2:after {
+      content: ': ';
+    }
+  }
+}
