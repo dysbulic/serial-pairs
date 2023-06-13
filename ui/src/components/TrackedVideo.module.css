@@ -1,0 +1,4 @@
+.video {
+  max-height: calc(100svh - 3rem);
+  max-width: 100%;
+}

@@ -1,0 +1,5 @@
+.block {
+  display: inline-block;
+  width: var(--size, 100%);
+  background-color: var(--bg, #00000099);
+}

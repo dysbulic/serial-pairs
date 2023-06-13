@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef } from 'react'
-import styles from '../app/page.module.css'
+import styles from './TrackedVideo.module.css'
 
 export default function TrackedVideo({ setTime, setDuration }) {
   const video = useRef(null)

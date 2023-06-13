@@ -5,6 +5,7 @@ import FoldingMenu from '@/components/FoldingMenu'
 import TrackedVideo from '@/components/TrackedVideo'
 import styles from './page.module.css'
 import ModeDialog from '@/components/ModeDialog'
+import Timeline from '@/components/Timeline'
 
 // export const metadata = {
 //   title: 'Session Review',
@@ -18,7 +19,7 @@ export type ButtonInfo = {
 }
 
 export type ModeInfo = {
-  id: string
+  id?: string
   mode: string
   start: number
 }
@@ -31,6 +32,7 @@ export default function Home() {
     { bg: '#A59506', icon: '🗺', label: 'Planning' },
     { bg: '#06A5A5', icon: '💬', label: 'Chatter' },
     { bg: '#690E6B', icon: '🏖', label: 'Break' },
+    { bg: '#C27800', icon: '❓', label: 'Unknown' },
   ]
   const eventButtons = [
     { bg: '#24EEBE', icon: '/error.svg', label: 'Standards Error' },
@@ -47,38 +49,46 @@ export default function Home() {
   const selected = ({ label }: { label: string }) => {
     setSelectedMode(label)
     setModeOpen(true)
-    console.info({ modeOpen })
   }
   const insertMode = (info: ModeInfo) => {
-    setModes((modes) => ({ ...modes, [info.id]: info }))
-    console.info({ modes })
+    setModes((modes) => ({ ...modes, [info.start]: info }))
   }
 
   return (
     <main className={styles.main}>
-      <aside className={styles.sidebar}>
-        <FoldingMenu
-          label="Mode"
-          icon="/lens.svg"
-          buttons={modeButtons}
-          onSelect={selected}
+      <section className={styles.top}>
+        <aside className={styles.sidebar}>
+          <FoldingMenu
+            label="Mode"
+            icon="/lens.svg"
+            buttons={modeButtons}
+            onSelect={selected}
+          />
+          <FoldingMenu
+            label="Event"
+            icon="/gavel.svg"
+            buttons={eventButtons}
+            elemStyle={{ '--fg': 'black' } as React.CSSProperties}
+          />
+        </aside>
+        <TrackedVideo
+          {...{ setTime, setDuration}}
         />
-        <FoldingMenu
-          label="Event"
-          icon="/gavel.svg"
-          buttons={eventButtons}
-          elemStyle={{ '--fg': 'black' } as React.CSSProperties}
+        <ModeDialog
+          open={modeOpen}
+          {...{ time, setModeOpen, insertMode }}
+          types={modeButtons.map(({ label }) => label)}
+          type={selectedMode}
         />
-      </aside>
-      <TrackedVideo
-        {...{ setTime, setDuration}}
-      />
-      <ModeDialog
-        open={modeOpen}
-        {...{ time, setModeOpen, insertMode }}
-        types={modeButtons.map(({ label }) => label)}
-        type={selectedMode}
-      />
+      </section>
+      <section className={styles.bottom}>
+        <Timeline
+          {...{ time, modes, duration }}
+          colors={Object.fromEntries(
+            modeButtons.map(({ label, bg }) => [label, bg])
+          )}
+        />
+      </section>
     </main>
   )
 }

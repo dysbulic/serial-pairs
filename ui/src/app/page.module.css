@@ -1,10 +1,23 @@
 .main {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  max-height: 100dvh;
 
-  .video {
-    max-height: 100dvh;
-    display: block;
+  & .top {
+    display: flex;
+    justify-content: center;
+
+    & aside {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+    }
+  }
+
+  & .bottom {
+    display: flex;
+    flex-grow: 1;
   }
 }
