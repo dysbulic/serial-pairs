@@ -87,5 +87,6 @@
   & h2, & h3 {
     text-align: center;
     color: var(--fg);
+    margin-block: 0
   }
 }

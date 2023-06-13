@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useRef, useState } from 'react'
 import styles from './ModeDialog.module.css'
+import { ModeInfo } from '@/app/page'
 
 export default function ModeDialog(
   {
@@ -17,7 +18,7 @@ export default function ModeDialog(
     type?: string
     time: number
     setModeOpen: (open: boolean) => void
-    insertMode: (args: { id: string, mode: string }) => void
+    insertMode: (args: ModeInfo) => void
   }
 ) {
   const [type, setType] = useState(selectedType)
@@ -41,11 +42,11 @@ export default function ModeDialog(
   }, [setModeOpen])
   const submit = (evt: FormEvent) => {
     evt.preventDefault()
-    const { value: type } = (evt.target as HTMLFormElement)?.elements[0] as HTMLInputElement
     console.info({ t: evt.target })
     insertMode({
       id: time.toString(),
-      mode: type,
+      mode: type ?? 'Unknown',
+      start,
     })
     dialogRef.current?.close()
   }
@@ -70,13 +71,16 @@ export default function ModeDialog(
           <label>
             <h2>Start Time</h2>
             <input
+              id="start"
               type="number"
-              value={time}
+              value={start}
               onChange={({ target: { value }}) => setStart(Number(value))}
             />
           </label>
-          <button formAction="dialog">Cancel</button>
-          <button>Save</button>
+          <section className={styles.actions}>
+            <button formAction="dialog">Cancel</button>
+            <button>Save</button>
+          </section>
         </form>
       </main>
     </dialog>

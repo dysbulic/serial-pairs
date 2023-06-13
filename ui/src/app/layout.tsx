@@ -1,12 +1,12 @@
 import './globals.css'
 import { Inter } from 'next/font/google'
+import Head from 'next/head'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
   title: 'Session Review',
   description: 'Interface for reviewing a pair programming session.',
-  'og:image': 'https://pairs.trwb.live/banner.png',
 }
 
 export default function RootLayout({

@@ -20,6 +20,7 @@ export type ButtonInfo = {
 export type ModeInfo = {
   id: string
   mode: string
+  start: number
 }
 
 export default function Home() {
@@ -38,6 +39,7 @@ export default function Home() {
     { bg: '#8399E6', icon: '/stop buffalo.svg', label: 'Wrong Headed' },
     { bg: '#EE410B', icon: '/solutions.svg', label: 'Solution Found' },
   ]
+  const [modes, setModes] = useState({})
   const [selectedMode, setSelectedMode] = useState<string>()
   const [modeOpen, setModeOpen] = useState(false)
   const [time, setTime] = useState(0)
@@ -47,8 +49,9 @@ export default function Home() {
     setModeOpen(true)
     console.info({ modeOpen })
   }
-  const insertMode = ({ id, mode }: ModeInfo) => {
-    console.info({ id, mode })
+  const insertMode = (info: ModeInfo) => {
+    setModes((modes) => ({ ...modes, [info.id]: info }))
+    console.info({ modes })
   }
 
   return (
