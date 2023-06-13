@@ -27,7 +27,10 @@ export default function ModeDialog(
     if(open) {
       setType(selectedType)
       setStart(time)
-      dialogRef.current?.showModal()
+      console.info({ D: dialogRef.current })
+      if(!dialogRef.current?.open) {
+        dialogRef.current?.showModal()
+      }
     }
   }, [open, selectedType, time])
   useEffect(() => {
