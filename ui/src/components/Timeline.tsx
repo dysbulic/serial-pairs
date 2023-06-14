@@ -1,6 +1,6 @@
 import type { ModeInfo } from '@/app/page';
 import styles from './Timeline.module.css'
-import { JsxElement } from 'typescript';
+import { Tooltip } from 'react-tooltip'
 import { ReactElement } from 'react';
 
 export const Block = (
@@ -17,13 +17,15 @@ export const Block = (
   )
   console.info({ size, current, last, duration })
   return (
-    <span
-      className={styles.block}
-      style={{
-        '--size': `${size}%`,
-        '--bg': bg,
-      } as React.CSSProperties}
-    />
+    <Tooltip content="Test">
+      <span
+        className={styles.block}
+        style={{
+          '--size': `${size}%`,
+          '--bg': bg,
+        } as React.CSSProperties}
+      />
+    </Tooltip>
   )
 }
 
@@ -48,15 +50,12 @@ export default function Timeline(
     modes[time] = last
   }
 
-  console.info({ last, duration })
   if(last.start < duration) {
     last = { mode: 'Unknown', start: duration }
     modes[duration] = last
   }
 
   times = Object.keys(modes).sort()
-
-  console.log({ times })
 
   const spans: Array<ReactElement> = []
   times.forEach((id, idx) => {
