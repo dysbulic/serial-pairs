@@ -1,0 +1,40 @@
+type ProgrammingSession @loadModel(id: "kjzl6hvfrbw6ca4scdojyyh3he80mv7ifgd514eel8t19ju0z9c95sqy1bagwi3") {
+  id: ID!
+}
+
+type Button {
+  id: ID!
+  bg: String @string(maxLength: 39)
+  icon: String! @string(maxLength: 555)
+  label: String! @string(maxLength: 155)
+}
+
+type ProgrammingSessionReviewButtons {
+  id: ID!
+  mode: [Button] @list(maxLength: 100)
+  event: [Button] @list(maxLength: 100)
+  action: [Button] @list(maxLength: 100)
+}
+
+type ProgrammingSessionMode {
+  id: ID!
+  mode: String! @string(minLength: 1, maxLength: 155)
+  start: Float! @float
+}
+
+type ProgrammingSessionEvent {
+  id: ID!
+  event: String! @string(maxLength: 155)
+  at: Float! @float
+  explanation: String @string(maxLength: 888)
+}
+
+type ProgrammingSessionReview @createModel(
+  accountRelation: LIST,
+  description: "Pair programming session review"
+) {
+  sessionID: StreamID! @documentReference(model: "ProgrammingSession")
+  buttons: ProgrammingSessionReviewButtons
+  modes: [ProgrammingSessionMode] @list(maxLength: 300)
+  events: [ProgrammingSessionEvent] @list(maxLength: 300)
+}

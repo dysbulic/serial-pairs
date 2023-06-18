@@ -1,0 +1,10 @@
+type ProgrammingSession @createModel(
+  accountRelation: LIST,
+  description: "Pair programming session"
+) {
+  title: String! @string(minLength: 1, maxLength: 150)
+  description: String @string(minLength: 1, maxLength: 500)
+  start: DateTime
+  duration: Float
+  videoUrl: String! @string(minLength: 5, maxLength: 777)
+}

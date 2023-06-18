@@ -23,6 +23,7 @@ export default function EventDialog(
 ) {
   const [type, setType] = useState(selectedType)
   const [start, setStart] = useState(time)
+  const [explanation, setExplanation] = useState('')
   const dialogRef = useRef<HTMLDialogElement>(null)
   useEffect(() => {
     if(open) {
@@ -45,6 +46,7 @@ export default function EventDialog(
     upsertEvent({
       event: type ?? 'Unknown',
       at: start,
+      explanation,
     })
     dialogRef.current?.close()
   }
@@ -73,6 +75,14 @@ export default function EventDialog(
               type="number"
               value={start}
               onChange={({ target: { value }}) => setStart(Number(value))}
+            />
+          </label>
+          <label>
+            <h2>Explanation</h2>
+            <textarea
+              id="explanation"
+              value={explanation}
+              onChange={({ target: { value }}) => setExplanation(value)}
             />
           </label>
           <section className={styles.actions}>

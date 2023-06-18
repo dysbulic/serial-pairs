@@ -22,3 +22,9 @@
     width: 100%;
   }
 }
+
+#fileselect {
+  display: grid;
+  place-items: center;
+  height: 100svh;
+}

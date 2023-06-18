@@ -1,7 +1,12 @@
 "use client"
 
-import { useRef, useState } from 'react'
+// import { useAccount, useConnect } from 'wagmi'
+import { DIDSession } from 'did-session'
+import { EthereumWebAuth, getAccountId } from '@didtools/pkh-ethereum'
+import { useMemo, useRef, useState } from 'react'
 import JSON5 from 'json5'
+import { ComposeClient }from '@composedb/client'
+import { definition } from '../../../ceramic/models/ProgrammingSession.runtime'
 import FoldingMenu from '@/components/FoldingMenu'
 import TrackedVideo from '@/components/TrackedVideo'
 import styles from './page.module.css'
@@ -30,6 +35,7 @@ export type EventInfo = {
   id?: string
   event: string
   at: number
+  explanation?: string
 }
 
 const downloadString = (
@@ -49,8 +55,8 @@ const downloadString = (
   setTimeout(() => { URL.revokeObjectURL(a.href) }, 1500)
 }
 
-export default function Home() {
-  const modeButtons = [
+const defaultButtons = {
+  mode: [
     { bg: '#016A18', icon: '🖊', label: 'New Work' },
     { bg: '#6A0E01', icon: '🐞', label: 'Debugging' },
     { bg: '#0D1B98', icon: '🥽', label: 'Testing' },
@@ -58,19 +64,28 @@ export default function Home() {
     { bg: '#06A5A5', icon: '💬', label: 'Chatter' },
     { bg: '#690E6B', icon: '🏖', label: 'Break' },
     { bg: '#C27800', icon: '❓', label: 'Unknown' },
-  ]
-  const eventButtons = [
+  ],
+  event: [
     { bg: '#24EEBE', icon: '/error.svg', label: 'Standards Error' },
     { bg: '#BEEE24', icon: '/dead day.svg', label: 'Useless Event' },
     { bg: '#EE24BA', icon: '/Spartan.svg', label: 'Right Headed' },
     { bg: '#8399E6', icon: '/stop buffalo.svg', label: 'Wrong Headed' },
     { bg: '#EE410B', icon: '/solutions.svg', label: 'Solution Found' },
-  ]
-  const actionButtons = [
+  ],
+  action: [
     { bg: '#FFA8A8', icon: '/download.svg', label: 'Download Config' },
     { bg: '#FFD5A8', icon: '/ceramic.svg', label: 'Save To Ceramic' },
-  ]
+  ],
+}
 
+export default function Home() {
+  // const composedb = useMemo(() => (
+  //   new ComposeClient({ ceramic: 'http://localhost:7007', definition })
+  // ), [])
+  const [modeButtons, setModeButtons] = useState(defaultButtons.mode)
+  const [eventButtons, setEventButtons] = useState(defaultButtons.event)
+  const [actionButtons, setActionButtons] = useState(defaultButtons.action)
+  const [videoSrc, setVideoSrc] = useState()
   const [modes, setModes] = useState({})
   const [selectedMode, setSelectedMode] = useState<string>()
   const [modeOpen, setModeOpen] = useState(false)
@@ -80,6 +95,67 @@ export default function Home() {
   const [time, setTime] = useState(0)
   const [duration, setDuration] = useState(0)
   const video = useRef<HTMLVideoElement>(null)
+  const [provider, setProvider] = useState()
+  // const { connector: activeConnector, isConnected } = useAccount()
+  // const { connect, connectors, error, isLoading, pendingConnector } =
+  //   useConnect()
+
+  if(!videoSrc) {
+    return (
+      <main id={styles.fileselect}>
+        <form
+          onSubmit={(evt) => {
+            evt.preventDefault()
+            const form = evt.target as HTMLFormElement
+            const { files } = form.querySelector('#meta') as HTMLInputElement
+            const [input] = files
+            const reader = new FileReader()
+            reader.onload = (evt) => {
+              const { result } = evt.target as FileReader
+              const metadata = JSON5.parse(result as string)
+              const { video, buttons, modes, events } = metadata
+              setVideoSrc(video)
+              setModeButtons(buttons.mode)
+              setEventButtons(buttons.event)
+              setActionButtons(buttons.action)
+              setModes(modes)
+              setEvents(events)
+            }
+            reader.readAsText(input)
+          }}
+        >
+          <label>
+            <span>Enter a Ceramic Stream ID:</span>
+            <input id="ceramic"/>
+          </label>
+          <div>or</div>
+          <label>
+            <span>Enter a metadata file:</span>
+            <input id="meta" type="file"/>
+          </label>
+          <div><button>Load</button></div>
+        </form>
+      </main>
+    )
+  }
+
+  // if(provider == null) {
+  //   return (
+  //     connectors.map((connector) => (
+  //       <button
+  //         disabled={!connector.ready}
+  //         key={connector.id}
+  //         onClick={() => connect({ connector })}
+  //       >
+  //         {connector.name}
+  //         {isLoading &&
+  //           pendingConnector?.id === connector.id &&
+  //           ' (connecting)'}
+  //       </button>
+  //     ))
+  //   )
+  // }
+
   const modeSelected = ({ label }: { label: string }) => {
     setSelectedMode(label)
     setModeOpen(true)
@@ -88,9 +164,10 @@ export default function Home() {
     setSelectedEvent(label)
     setEventOpen(true)
   }
-  const actionSelected = ({ label }: { label: string }) => {
+  const actionSelected = async ({ label }: { label: string }) => {
     if(label === 'Download Config') {
       const config = {
+        video: videoSrc,
         buttons: {
           mode: modeButtons,
           event: eventButtons,
@@ -104,17 +181,30 @@ export default function Home() {
         mimetype: 'text/javascript',
         filename: `video_config.${new Date().toISOString()}.json5`,
       })
+    } else if(label === 'Save To Ceramic') {
+      // const addresses = await provider.request({ method: 'eth_requestAccounts' })
+      // const accountId = await getAccountId(provider, addresses[0])
+      // const authMethod = await EthereumWebAuth.getAuthMethod(provider, accountId)
+      
+      // const compose = new ComposeClient()
+      
+      // const session = await DIDSession.authorize(authMethod, { resources: compose.resources})
+      // compose.setDID(session.did)
     }
   }
   const insertMode = (info: ModeInfo) => {
     setModes((ms) => ({ ...ms, [info.start]: info }))
-  }
+  }         
   const upsertEvent = (info: EventInfo, index?: number) => {
-    if(index == null) {
-      setEvents((es) => [...es, info])
-    } else {
-      setEvents((es) => [...es.slice(0, index), info, ...es.slice(index + 1)])
-    }
+    setEvents((es) => {
+      if(index == null) {
+        return [...es, info]
+      } else if(info == null) {
+        return es.splice(index, 1)
+      } else {
+        return [...es.slice(0, index), info, ...es.slice(index + 1)]
+      }
+    })
   }
 
   return (
@@ -144,6 +234,7 @@ export default function Home() {
         </aside>
         <TrackedVideo
           {...{ setTime, setDuration}}
+          src={videoSrc}
           ref={video}
         />
         <ModeDialog
