@@ -79,9 +79,6 @@ const defaultButtons = {
 }
 
 export default function Home() {
-  // const composedb = useMemo(() => (
-  //   new ComposeClient({ ceramic: 'http://localhost:7007', definition })
-  // ), [])
   const [modeButtons, setModeButtons] = useState(defaultButtons.mode)
   const [eventButtons, setEventButtons] = useState(defaultButtons.event)
   const [actionButtons, setActionButtons] = useState(defaultButtons.action)
@@ -103,6 +100,7 @@ export default function Home() {
   if(!videoSrc) {
     return (
       <main id={styles.fileselect}>
+        <img src="/banner.svg" alt="Serial Pairs"/>
         <form
           onSubmit={(evt) => {
             evt.preventDefault()
@@ -132,6 +130,11 @@ export default function Home() {
           <label>
             <span>Enter a metadata file:</span>
             <input id="meta" type="file"/>
+          </label>
+          <div>or</div>
+          <label>
+            <span>Enter a video URL:</span>
+            <input id="video"/>
           </label>
           <div><button>Load</button></div>
         </form>
@@ -165,33 +168,44 @@ export default function Home() {
     setEventOpen(true)
   }
   const actionSelected = async ({ label }: { label: string }) => {
-    if(label === 'Download Config') {
-      const config = {
-        video: videoSrc,
-        buttons: {
-          mode: modeButtons,
-          event: eventButtons,
-          action: actionButtons,
-        },
-        modes,
-        events,
-      }
+  const config = {
+    video: videoSrc,
+    buttons: {
+      mode: modeButtons,
+      event: eventButtons,
+      action: actionButtons,
+    },
+    modes,
+    events,
+  }
+  if(label === 'Download Config') {
       downloadString({
         text: JSON5.stringify(config, null, 2),
         mimetype: 'text/javascript',
         filename: `video_config.${new Date().toISOString()}.json5`,
       })
     } else if(label === 'Save To Ceramic') {
-      // const addresses = await provider.request({ method: 'eth_requestAccounts' })
-      // const accountId = await getAccountId(provider, addresses[0])
-      // const authMethod = await EthereumWebAuth.getAuthMethod(provider, accountId)
-      
-      // const compose = new ComposeClient()
-      
-      // const session = await DIDSession.authorize(authMethod, { resources: compose.resources})
-      // compose.setDID(session.did)
+      const addresses = await provider.request({ method: 'eth_requestAccounts' })
+      const accountId = await getAccountId(provider, addresses[0])
+      const authMethod = await EthereumWebAuth.getAuthMethod(provider, accountId)
+
+      const composedb = useMemo(() => (
+        new ComposeClient({ ceramic: 'http://localhost:7007', definition })
+      ), [])
+
+      const session = await DIDSession.authorize(authMethod, { resources: compose.resources})
+      composedb.setDID(session.did)
+
+      await composedb.executeQuery(`
+        mutation {
+          createProgrammingSession(input: {
+            content: {
+              videoURL: "${videoSrc}"
+            }
+          })
+        }
+      `)
     }
-  }
   const insertMode = (info: ModeInfo) => {
     setModes((ms) => ({ ...ms, [info.start]: info }))
   }         

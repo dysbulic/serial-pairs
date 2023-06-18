@@ -77,6 +77,21 @@ export default function ModeDialog(
               onChange={({ target: { value }}) => setStart(Number(value))}
             />
           </label>
+          <table>
+            <tbody>
+              <tr><th/><th>On Track</th><th>Off Track</th></tr>
+              <tr>
+                <th>Correct</th>
+                <td><input type="radio" name="track"/></td>
+                <td><input type="radio" name="track"/></td>
+              </tr>
+              <tr>
+                <th>Incorrect</th>
+                <td><input type="radio" name="track"/></td>
+                <td><input type="radio" name="track"/></td>
+              </tr>
+            </tbody>
+          </table>
           <section className={styles.actions}>
             <button formAction="dialog">Cancel</button>
             <button autoFocus>Save</button>

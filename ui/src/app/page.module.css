@@ -27,4 +27,12 @@
   display: grid;
   place-items: center;
   height: 100svh;
+
+  & span {
+    margin-inline-end: 0.5rem;
+  }
+
+  & img {
+    max-height: 50vh;
+  }
 }
