@@ -33,7 +33,10 @@ const timeSort = (a: string, b: string) => (
 )
 
 export default function Timeline(
-  { modes, events, time, setTime, duration, modeColors, eventIcons }:
+  {
+    modes: input, events, time, setTime,
+    duration, modeColors, eventIcons,
+  }:
   {
     modes: Record<string, ModeInfo>
     events: Array<EventInfo>
@@ -44,6 +47,8 @@ export default function Timeline(
     eventIcons: Record<string, string>
   }
 ) {
+  const modes = { ...input }
+
   let times = Object.keys(modes).sort(timeSort)
   if(times.length === 0 || times[0] !== '0') {
     modes['0'] = { mode: 'Unknown', start: 0 }

@@ -79,7 +79,7 @@ export default function ModeDialog(
           </label>
           <section className={styles.actions}>
             <button formAction="dialog">Cancel</button>
-            <button>Save</button>
+            <button autoFocus>Save</button>
           </section>
         </form>
       </main>

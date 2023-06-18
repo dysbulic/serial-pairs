@@ -28,5 +28,11 @@
     top: 2rem;
     left: var(--pos, 0%);
     transform: translateX(-50%);
+    transition: max-height 0.2s ease-in-out, top 0.2s ease-in-out;
+
+    &:hover {
+      max-height: 5rem;
+      top: 0.25rem;
+    }
   }
 }

@@ -1,0 +1,40 @@
+{
+  "ipfs": "Bundled",
+  "state_store": {
+    "LocalDirectory": "/etc/ceramic/data"
+  },
+  "http_api": {
+    "hostname": "127.0.0.1",
+    "port": 7007,
+    "cors_allowed_origins": [],
+    "admin_dids": [
+      "did:key:z6MkuLSAvJZfgTsF25T4B33qrke1EanKKzKkE4L5L3ppAbbk"
+    ]
+  },
+  "network": {
+    "id": "InMemory",
+    "pubsub_topic": null
+  },
+  "anchor": "None",
+  "indexing": {
+    "db": "sqlite:///home/dys/tip/program/pairs.trwb.live/ceramic/ceramic-indexing/ceramic.db",
+    "allow_queries_before_historical_sync": true,
+    "enable_historical_sync": false
+  },
+  "did_resolvers": {
+    "Ethr": {}
+  },
+  "node": {
+    "gateway": false,
+    "sync_override": false,
+    "stream_cache_limit": 100
+  },
+  "logger": {
+    "file": {
+      "enabled": true,
+      "directory": "./log/ceramic"
+    },
+    "level": "Info"
+  },
+  "metrics": "Disabled"
+}

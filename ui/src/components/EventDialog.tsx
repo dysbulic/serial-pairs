@@ -11,14 +11,14 @@ export default function EventDialog(
     type: selectedType,
     time,
     setEventOpen,
-    insertEvent
+    upsertEvent
   }: {
     open?: boolean
     types: string[]
     type?: string
     time: number
     setEventOpen: (open: boolean) => void
-    insertEvent: (args: EventInfo) => void
+    upsertEvent: (args: EventInfo) => void
   }
 ) {
   const [type, setType] = useState(selectedType)
@@ -42,7 +42,7 @@ export default function EventDialog(
   }, [setEventOpen])
   const submit = (evt: FormEvent) => {
     evt.preventDefault()
-    insertEvent({
+    upsertEvent({
       event: type ?? 'Unknown',
       at: start,
     })
@@ -77,7 +77,7 @@ export default function EventDialog(
           </label>
           <section className={styles.actions}>
             <button formAction="dialog">Cancel</button>
-            <button>Save</button>
+            <button autoFocus>Save</button>
           </section>
         </form>
       </main>

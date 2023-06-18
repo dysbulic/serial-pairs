@@ -33,25 +33,25 @@
 
   & label:has(input:checked) ~ ul li {
     &:nth-of-type(1) {
-      left: calc(1 * var(--item-width))
+      left: calc(1.5 * var(--item-width))
     }
     &:nth-of-type(2) {
-      left: calc(2 * var(--item-width))
+      left: calc(2.5 * var(--item-width))
     }
     &:nth-of-type(3) {
-      left: calc(3 * var(--item-width))
+      left: calc(3.5 * var(--item-width))
     }
     &:nth-of-type(4) {
-      left: calc(4 * var(--item-width))
+      left: calc(4.5 * var(--item-width))
     }
     &:nth-of-type(5) {
-      left: calc(5 * var(--item-width))
+      left: calc(5.5 * var(--item-width))
     }
     &:nth-of-type(6) {
-      left: calc(6 * var(--item-width))
+      left: calc(6.5 * var(--item-width))
     }
     &:nth-of-type(7) {
-      left: calc(7 * var(--item-width))
+      left: calc(7.5 * var(--item-width))
     }
   }
 }

@@ -2,6 +2,7 @@
 
 import { ButtonInfo } from '@/app/page'
 import styles from './FoldingMenu.module.css'
+import { useState } from 'react'
 
 const Icon = ({ src, alt = '' }: { src: string, alt?: string }) => {
   if(src.includes('.')) {
@@ -27,6 +28,8 @@ export default function FoldingMenu(
     onSelect?: (args: ButtonInfo) => void
   }
 ) {
+  const [open, setOpen] = useState(false)
+
   return (
     <ul className={styles.menu}>
       <li>
@@ -36,7 +39,11 @@ export default function FoldingMenu(
         >
           <Icon src={icon} alt={label}/>
           <h2>{label}</h2>
-          <input type="checkbox"/>
+          <input
+            type="checkbox"
+            checked={open}
+            onChange={() => setOpen((o) => !o)}
+          />
         </label>
         <ul>
           {buttons.map((args) => {
@@ -45,7 +52,10 @@ export default function FoldingMenu(
               <li
                 key={label}
                 style={elemStyle}
-                onClick={() => onSelect(args)}
+                onClick={() => {
+                  setOpen(false)
+                  onSelect(args)
+                }}
               >
                 <div
                   className={styles.picButton}

@@ -1,6 +1,7 @@
 "use client"
 
 import { useRef, useState } from 'react'
+import JSON5 from 'json5'
 import FoldingMenu from '@/components/FoldingMenu'
 import TrackedVideo from '@/components/TrackedVideo'
 import styles from './page.module.css'
@@ -31,6 +32,23 @@ export type EventInfo = {
   at: number
 }
 
+const downloadString = (
+  { text, mimetype, filename }:
+  { text: string, mimetype: string, filename: string }
+) => {
+  var blob = new Blob([text], { type: mimetype });
+
+  const a = document.createElement('a')
+  a.download = filename
+  a.href = URL.createObjectURL(blob)
+  a.dataset.downloadurl = [mimetype, a.download, a.href].join(':')
+  a.style.display = 'none'
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  setTimeout(() => { URL.revokeObjectURL(a.href) }, 1500)
+}
+
 export default function Home() {
   const modeButtons = [
     { bg: '#016A18', icon: '🖊', label: 'New Work' },
@@ -48,6 +66,11 @@ export default function Home() {
     { bg: '#8399E6', icon: '/stop buffalo.svg', label: 'Wrong Headed' },
     { bg: '#EE410B', icon: '/solutions.svg', label: 'Solution Found' },
   ]
+  const actionButtons = [
+    { bg: '#FFA8A8', icon: '/download.svg', label: 'Download Config' },
+    { bg: '#FFD5A8', icon: '/ceramic.svg', label: 'Save To Ceramic' },
+  ]
+
   const [modes, setModes] = useState({})
   const [selectedMode, setSelectedMode] = useState<string>()
   const [modeOpen, setModeOpen] = useState(false)
@@ -65,11 +88,33 @@ export default function Home() {
     setSelectedEvent(label)
     setEventOpen(true)
   }
+  const actionSelected = ({ label }: { label: string }) => {
+    if(label === 'Download Config') {
+      const config = {
+        buttons: {
+          mode: modeButtons,
+          event: eventButtons,
+          action: actionButtons,
+        },
+        modes,
+        events,
+      }
+      downloadString({
+        text: JSON5.stringify(config, null, 2),
+        mimetype: 'text/javascript',
+        filename: `video_config.${new Date().toISOString()}.json5`,
+      })
+    }
+  }
   const insertMode = (info: ModeInfo) => {
     setModes((ms) => ({ ...ms, [info.start]: info }))
   }
-  const insertEvent = (info: EventInfo) => {
-    setEvents((es) => [...es, info])
+  const upsertEvent = (info: EventInfo, index?: number) => {
+    if(index == null) {
+      setEvents((es) => [...es, info])
+    } else {
+      setEvents((es) => [...es.slice(0, index), info, ...es.slice(index + 1)])
+    }
   }
 
   return (
@@ -89,6 +134,13 @@ export default function Home() {
             onSelect={eventSelected}
             elemStyle={{ '--fg': 'black' } as React.CSSProperties}
           />
+          <FoldingMenu
+            label="Action"
+            icon="/actions.svg"
+            buttons={actionButtons}
+            onSelect={actionSelected}
+            elemStyle={{ '--fg': 'black' } as React.CSSProperties}
+          />
         </aside>
         <TrackedVideo
           {...{ setTime, setDuration}}
@@ -102,7 +154,7 @@ export default function Home() {
         />
         <EventDialog
           open={eventOpen}
-          {...{ time, setEventOpen, insertEvent }}
+          {...{ time, setEventOpen, upsertEvent }}
           types={eventButtons.map(({ label }) => label)}
           type={selectedEvent}
         />
