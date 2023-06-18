@@ -7,6 +7,7 @@
     "hh:balance": "npm --workspace=contracts run balance",
     "hh:deploy": "npm --workspace=contracts run deploy",
     "ui:dev": "npm --workspace=ui run dev",
+    "ui:build": "npm --workspace=ui run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

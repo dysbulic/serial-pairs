@@ -3,10 +3,12 @@
 // import { useAccount, useConnect } from 'wagmi'
 import { DIDSession } from 'did-session'
 import { EthereumWebAuth, getAccountId } from '@didtools/pkh-ethereum'
-import { useMemo, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import JSON5 from 'json5'
+import { jsonToGraphQLQuery as toGraphQL } from 'json-to-graphql-query'
 import { ComposeClient }from '@composedb/client'
 import { definition } from '../../../ceramic/models/ProgrammingSession.runtime'
+import type { RuntimeCompositeDefinition } from '@composedb/types';
 import FoldingMenu from '@/components/FoldingMenu'
 import TrackedVideo from '@/components/TrackedVideo'
 import styles from './page.module.css'
@@ -92,7 +94,11 @@ export default function Home() {
   const [time, setTime] = useState(0)
   const [duration, setDuration] = useState(0)
   const video = useRef<HTMLVideoElement>(null)
-  const [provider, setProvider] = useState()
+  const [provider, setProvider] = useState(
+    typeof window !== 'undefined' ? (
+      (window as unknown as { ethereum: any }).ethereum
+    ) : ( null )
+  )
   // const { connector: activeConnector, isConnected } = useAccount()
   // const { connect, connectors, error, isLoading, pendingConnector } =
   //   useConnect()
@@ -106,7 +112,7 @@ export default function Home() {
             evt.preventDefault()
             const form = evt.target as HTMLFormElement
             const { files } = form.querySelector('#meta') as HTMLInputElement
-            const [input] = files
+            const [input] = Array.from(files ?? [])
             const reader = new FileReader()
             reader.onload = (evt) => {
               const { result } = evt.target as FileReader
@@ -142,23 +148,6 @@ export default function Home() {
     )
   }
 
-  // if(provider == null) {
-  //   return (
-  //     connectors.map((connector) => (
-  //       <button
-  //         disabled={!connector.ready}
-  //         key={connector.id}
-  //         onClick={() => connect({ connector })}
-  //       >
-  //         {connector.name}
-  //         {isLoading &&
-  //           pendingConnector?.id === connector.id &&
-  //           ' (connecting)'}
-  //       </button>
-  //     ))
-  //   )
-  // }
-
   const modeSelected = ({ label }: { label: string }) => {
     setSelectedMode(label)
     setModeOpen(true)
@@ -189,23 +178,89 @@ export default function Home() {
       const accountId = await getAccountId(provider, addresses[0])
       const authMethod = await EthereumWebAuth.getAuthMethod(provider, accountId)
 
-      const composedb = useMemo(() => (
-        new ComposeClient({ ceramic: 'http://localhost:7007', definition })
-      ), [])
+      const composedb = (
+        new ComposeClient({
+          ceramic: process.env.CERAMIC_URL ?? 'http://localhost:7007',
+          definition: definition as RuntimeCompositeDefinition,
+        })
+      )
 
-      const session = await DIDSession.authorize(authMethod, { resources: compose.resources})
+      const session = await DIDSession.authorize(
+        authMethod, { resources: composedb.resources }
+      )
       composedb.setDID(session.did)
 
-      await composedb.executeQuery(`
+      const progSesh = await composedb.executeQuery(`
         mutation {
           createProgrammingSession(input: {
-            content: {
-              videoURL: "${videoSrc}"
-            }
+            content: { videoURL: "${videoSrc}" }
           })
+          { document { id } }
         }
       `)
+      type idedDoc = { document: { id: string } }
+      const { id: vidId } = (
+        (progSesh?.data?.createProgrammingSession as idedDoc).document
+      )
+      if(!!vidId) {
+        const configGraphQL = `
+          mutation {
+            createProgrammingSessionReview(input: {
+              content: {
+                sessionId: "${vidId}"
+                buttons: {
+                  mode: [
+                    ${
+                      modeButtons.map(({ label, icon, bg }) => (
+                        `{ label: "${label}", icon: "${icon}", bg: "${bg}" }`
+                      ))
+                      .join(',\n')
+                    }
+                  ]
+                  event: [
+                    ${
+                      eventButtons.map(({ label, icon, bg }) => (
+                        `{ label: "${label}", icon: "${icon}", bg: "${bg}" }`
+                      ))
+                      .join(',\n')
+                    }
+                  ]
+                  action: [
+                    ${
+                      actionButtons.map(({ label, icon, bg }) => (
+                        `{ label: "${label}", icon: "${icon}", bg: "${bg}" }`
+                      ))
+                      .join(',\n')
+                    }
+                  ]
+                }
+                modes: [
+                  ${
+                    Object.entries<ModeInfo>(modes).map(([key, { mode, start }]) => (
+                      `{ mode: "${mode}", start: ${start} }`
+                    ))
+                    .join(',\n')
+                  }
+
+                ]
+                events: [
+                  ${
+                    events.map(({ event, at, explanation }) => (
+                      `{ event: "${event}", at: ${at}, explanation: "${explanation}" }`
+                    ))
+                    .join(',\n')
+                  }
+                ]
+              }
+            })
+          }
+
+        `
+        const review = composedb.executeQuery(configGraphQL)
+        console.log({ review })
+      }
     }
+  }
   const insertMode = (info: ModeInfo) => {
     setModes((ms) => ({ ...ms, [info.start]: info }))
   }         
