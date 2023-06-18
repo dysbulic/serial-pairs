@@ -1,11 +1,12 @@
 "use client"
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import FoldingMenu from '@/components/FoldingMenu'
 import TrackedVideo from '@/components/TrackedVideo'
 import styles from './page.module.css'
 import ModeDialog from '@/components/ModeDialog'
 import Timeline from '@/components/Timeline'
+import EventDialog from '@/components/EventDialog'
 
 // export const metadata = {
 //   title: 'Session Review',
@@ -22,6 +23,12 @@ export type ModeInfo = {
   id?: string
   mode: string
   start: number
+}
+
+export type EventInfo = {
+  id?: string
+  event: string
+  at: number
 }
 
 export default function Home() {
@@ -44,14 +51,25 @@ export default function Home() {
   const [modes, setModes] = useState({})
   const [selectedMode, setSelectedMode] = useState<string>()
   const [modeOpen, setModeOpen] = useState(false)
+  const [events, setEvents] = useState<Array<EventInfo>>([])
+  const [selectedEvent, setSelectedEvent] = useState<string>()
+  const [eventOpen, setEventOpen] = useState(false)
   const [time, setTime] = useState(0)
   const [duration, setDuration] = useState(0)
-  const selected = ({ label }: { label: string }) => {
+  const video = useRef<HTMLVideoElement>(null)
+  const modeSelected = ({ label }: { label: string }) => {
     setSelectedMode(label)
     setModeOpen(true)
   }
+  const eventSelected = ({ label }: { label: string }) => {
+    setSelectedEvent(label)
+    setEventOpen(true)
+  }
   const insertMode = (info: ModeInfo) => {
-    setModes((modes) => ({ ...modes, [info.start]: info }))
+    setModes((ms) => ({ ...ms, [info.start]: info }))
+  }
+  const insertEvent = (info: EventInfo) => {
+    setEvents((es) => [...es, info])
   }
 
   return (
@@ -62,17 +80,19 @@ export default function Home() {
             label="Mode"
             icon="/lens.svg"
             buttons={modeButtons}
-            onSelect={selected}
+            onSelect={modeSelected}
           />
           <FoldingMenu
             label="Event"
             icon="/gavel.svg"
             buttons={eventButtons}
+            onSelect={eventSelected}
             elemStyle={{ '--fg': 'black' } as React.CSSProperties}
           />
         </aside>
         <TrackedVideo
           {...{ setTime, setDuration}}
+          ref={video}
         />
         <ModeDialog
           open={modeOpen}
@@ -80,12 +100,25 @@ export default function Home() {
           types={modeButtons.map(({ label }) => label)}
           type={selectedMode}
         />
+        <EventDialog
+          open={eventOpen}
+          {...{ time, setEventOpen, insertEvent }}
+          types={eventButtons.map(({ label }) => label)}
+          type={selectedEvent}
+        />
       </section>
       <section className={styles.bottom}>
         <Timeline
-          {...{ time, modes, duration }}
-          colors={Object.fromEntries(
+          {...{ time, events, modes, duration }}
+          setTime={(t: number) => {
+            setTime(t)
+            if(video.current) video.current.currentTime = t
+          }}
+          modeColors={Object.fromEntries(
             modeButtons.map(({ label, bg }) => [label, bg])
+          )}
+          eventIcons={Object.fromEntries(
+            eventButtons.map(({ label, icon }) => [label, icon])
           )}
         />
       </section>

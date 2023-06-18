@@ -1,4 +1,5 @@
 import './globals.css'
+import 'tippy.js/dist/tippy.css'
 import { Inter } from 'next/font/google'
 import Head from 'next/head'
 

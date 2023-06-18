@@ -1,6 +1,6 @@
-import type { ModeInfo } from '@/app/page';
+import type { EventInfo, ModeInfo } from '@/app/page';
 import styles from './Timeline.module.css'
-import { Tooltip } from 'react-tooltip'
+import Tooltip from '@tippyjs/react'
 import { ReactElement } from 'react';
 
 export const Block = (
@@ -15,9 +15,8 @@ export const Block = (
   const size = (
     (current.start - last.start) * 100 / duration
   )
-  console.info({ size, current, last, duration })
   return (
-    <Tooltip content="Test">
+    <Tooltip content={`${last.mode}: ${last.start}–${current.start}`}>
       <span
         className={styles.block}
         style={{
@@ -29,16 +28,23 @@ export const Block = (
   )
 }
 
+const timeSort = (a: string, b: string) => (
+  Number(a) - Number(b)
+)
+
 export default function Timeline(
-  { modes, time, duration, colors }:
+  { modes, events, time, setTime, duration, modeColors, eventIcons }:
   {
     modes: Record<string, ModeInfo>
+    events: Array<EventInfo>
     time: number
+    setTime: (time: number) => void
     duration: number
-    colors: Record<string, string>
+    modeColors: Record<string, string>
+    eventIcons: Record<string, string>
   }
 ) {
-  let times = Object.keys(modes).sort()
+  let times = Object.keys(modes).sort(timeSort)
   if(times.length === 0 || times[0] !== '0') {
     modes['0'] = { mode: 'Unknown', start: 0 }
     times.unshift('0')
@@ -55,7 +61,7 @@ export default function Timeline(
     modes[duration] = last
   }
 
-  times = Object.keys(modes).sort()
+  times = Object.keys(modes).sort(timeSort)
 
   const spans: Array<ReactElement> = []
   times.forEach((id, idx) => {
@@ -65,7 +71,7 @@ export default function Timeline(
         <Block
           key={idx}
           {...{ current, last, duration }}
-          bg={colors[current.mode]}
+          bg={modeColors[last.mode]}
         />
       )
     }
@@ -73,6 +79,28 @@ export default function Timeline(
   })
 
   return (
-    <div className={styles.colorbar}>{spans}</div>
+    <section className={styles.colorbar}>
+      {spans}
+      {events.map(({ at, event }, idx) => (
+        <Tooltip
+          key={idx}
+          content={`${at}: ${event}`}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            className={styles.event}
+            src={eventIcons[event]}
+            alt={event}
+            style={{ '--pos': `${at * 100 / duration}%` } as React.CSSProperties}
+          />
+        </Tooltip>
+      ))}
+      <input
+        type="range"
+        min="0" max={duration}
+        value={time}
+        onChange={({ target: { value } }) => setTime(Number(value))}
+      />
+    </section>
   )
 }
