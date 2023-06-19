@@ -85,7 +85,7 @@ export default function Home() {
   const [modeButtons, setModeButtons] = useState(defaultButtons.mode)
   const [eventButtons, setEventButtons] = useState(defaultButtons.event)
   const [actionButtons, setActionButtons] = useState(defaultButtons.action)
-  const [videoSrc, setVideoSrc] = useState()
+  const [videoSrc, setVideoSrc] = useState<string>()
   const [modes, setModes] = useState({})
   const [selectedMode, setSelectedMode] = useState<string>()
   const [modeOpen, setModeOpen] = useState(false)
@@ -131,9 +131,10 @@ export default function Home() {
               }
               case 'url': {
                 const { value: url } = form.querySelector('#metaurl') as HTMLInputElement
-                const config = await (await fetch(httpLink(url))).text()
-                  console.info({ config })
-                metadata = JSON5.parse(config)
+                if(!!url) {
+                  const config = await (await fetch(httpLink(url))).text()
+                  metadata = JSON5.parse(config)
+                }
                 break
               }
               case 'video': {

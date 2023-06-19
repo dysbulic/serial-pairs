@@ -8,7 +8,10 @@ type Maybe<T> = T | null
 
 const IPFS_LINK_PATTERN = 'https://w3s.link/ipfs/{cid}/{path}'
 
-export const httpLink = (uri?: Maybe<string>) => {
+export function httpLink(str: string): string
+export function httpLink(str: undefined | null): undefined
+
+export function httpLink(uri?: Maybe<string>) {
   const [, origCID, path] =
     uri?.match(/^(?:ipfs|dweb):(?:\/\/)?([^/]+)(?:\/(.*))?$/) ?? []
 
