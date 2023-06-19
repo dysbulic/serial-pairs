@@ -107,6 +107,7 @@ export default function Home() {
   if(!videoSrc) {
     return (
       <main id={styles.fileselect}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/banner.svg" alt="Serial Pairs"/>
         <form
           onSubmit={async (evt) => {
@@ -154,29 +155,37 @@ export default function Home() {
             }
           }}
         >
-          <input type="radio" name="source" value="ceramic"/>
-          <label>
-            <span>Enter a Ceramic Stream ID:</span>
-            <input id="ceramic"/>
-          </label>
+          <fieldset>
+            <input type="radio" name="source" value="ceramic"/>
+            <label>
+              <span>Enter a Ceramic Stream ID:</span>
+              <input id="ceramic"/>
+            </label>
+          </fieldset>
           <div>or</div>
-          <input type="radio" name="source" value="file"/>
-          <label>
-            <span>Enter a metadata file:</span>
-            <input id="metafile" type="file"/>
-          </label>
+          <fieldset>
+            <input type="radio" name="source" value="file"/>
+            <label>
+              <span>Enter a metadata file:</span>
+              <input id="metafile" type="file"/>
+            </label>
+          </fieldset>
           <div>or</div>
-          <input type="radio" name="source" value="url" defaultChecked/>
-          <label>
-            <span>Enter a metadata URL:</span>
-            <input id="metaurl" value="ipfs://bafybeigko6qg6og6ahwgwe3twoqxbnkywrxxifyk6wvcyt2bhdw4vbgyme/video_config.2023-06-18T15_31_35.824Z.json5"/>
-          </label>
+          <fieldset>
+            <input type="radio" name="source" value="url" defaultChecked/>
+            <label>
+              <span>Enter a metadata URL:</span>
+              <input id="metaurl" defaultValue="ipfs://bafybeigko6qg6og6ahwgwe3twoqxbnkywrxxifyk6wvcyt2bhdw4vbgyme/video_config.2023-06-18T15_31_35.824Z.json5"/>
+            </label>
+          </fieldset>
           <div>or</div>
-          <input type="radio" name="source" value="video"/>
-          <label>
-            <span>Enter a video URL:</span>
-            <input id="video"/>
-          </label>
+          <fieldset>
+            <input type="radio" name="source" value="video"/>
+            <label>
+              <span>Enter a video URL:</span>
+              <input id="video"/>
+            </label>
+          </fieldset>
           <div><button>Load</button></div>
         </form>
       </main>
@@ -299,7 +308,7 @@ export default function Home() {
   }
   const insertMode = (info: ModeInfo) => {
     setModes((ms) => ({ ...ms, [info.start]: info }))
-  }         
+  }
   const upsertEvent = (info: EventInfo, index?: number) => {
     setEvents((es) => {
       if(index == null) {

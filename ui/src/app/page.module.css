@@ -28,11 +28,30 @@
   place-items: center;
   height: 100svh;
 
+  & form {
+    width: min(100%, 60rem);
+  }
+
+  & fieldset, & label {
+    display: flex;
+    flex-grow: 1;
+  }
+
+  & label input {
+    flex-grow: 1;
+  }
+
   & span {
     margin-inline-end: 0.5rem;
   }
 
   & img {
     max-height: 50vh;
+  }
+
+  & div {
+    display: grid;
+    place-items: center;
+    margin-block: 0.5rem;
   }
 }

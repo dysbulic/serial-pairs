@@ -1,7 +1,9 @@
 import type { EventInfo, ModeInfo } from '@/app/page';
 import styles from './Timeline.module.css'
 import Tooltip from '@tippyjs/react'
-import { ReactElement } from 'react';
+import { ReactElement } from 'react'
+import Markdown from 'react-markdown'
+import remarkGFM from 'remark-gfm'
 
 export const Block = (
   { current, last, duration, bg }:
@@ -86,10 +88,18 @@ export default function Timeline(
   return (
     <section className={styles.colorbar}>
       {spans}
-      {events.map(({ at, event }, idx) => (
+      {events.map(({ at, event, explanation }, idx) => (
         <Tooltip
           key={idx}
-          content={`${at}: ${event}`}
+          content={
+            <Markdown remarkPlugins={[remarkGFM]}>
+              {`
+                ## ${at}: ${event}
+
+                ${explanation}
+              `}
+            </Markdown>
+          }
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
