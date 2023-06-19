@@ -78,6 +78,7 @@ const defaultButtons = {
   action: [
     { bg: '#FFA8A8', icon: '/download.svg', label: 'Download Config' },
     { bg: '#FFD5A8', icon: '/ceramic.svg', label: 'Save To Ceramic' },
+    { bg: '#FFA8A8', icon: '📈', label: 'Statistics' },
   ],
 }
 
@@ -92,6 +93,7 @@ export default function Home() {
   const [events, setEvents] = useState<Array<EventInfo>>([])
   const [selectedEvent, setSelectedEvent] = useState<string>()
   const [eventOpen, setEventOpen] = useState(false)
+  const [showStatitics, setShowStatitics] = useState(false)
   const [time, setTime] = useState(0)
   const [duration, setDuration] = useState(0)
   const video = useRef<HTMLVideoElement>(null)
@@ -107,7 +109,6 @@ export default function Home() {
   if(!videoSrc) {
     return (
       <main id={styles.fileselect}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/banner.svg" alt="Serial Pairs"/>
         <form
           onSubmit={async (evt) => {
@@ -155,41 +156,47 @@ export default function Home() {
             }
           }}
         >
-          <fieldset>
-            <input type="radio" name="source" value="ceramic"/>
-            <label>
-              <span>Enter a Ceramic Stream ID:</span>
-              <input id="ceramic"/>
-            </label>
-          </fieldset>
+          <input type="radio" name="source" value="ceramic"/>
+          <label>
+            <span>Enter a Ceramic Stream ID:</span>
+            <input id="ceramic"/>
+          </label>
           <div>or</div>
-          <fieldset>
-            <input type="radio" name="source" value="file"/>
-            <label>
-              <span>Enter a metadata file:</span>
-              <input id="metafile" type="file"/>
-            </label>
-          </fieldset>
+          <input type="radio" name="source" value="file"/>
+          <label>
+            <span>Enter a metadata file:</span>
+            <input id="metafile" type="file"/>
+          </label>
           <div>or</div>
-          <fieldset>
-            <input type="radio" name="source" value="url" defaultChecked/>
-            <label>
-              <span>Enter a metadata URL:</span>
-              <input id="metaurl" defaultValue="ipfs://bafybeigko6qg6og6ahwgwe3twoqxbnkywrxxifyk6wvcyt2bhdw4vbgyme/video_config.2023-06-18T15_31_35.824Z.json5"/>
-            </label>
-          </fieldset>
+          <input type="radio" name="source" value="url" defaultChecked/>
+          <label>
+            <span>Enter a metadata URL:</span>
+            <input id="metaurl" value="ipfs://bafybeigko6qg6og6ahwgwe3twoqxbnkywrxxifyk6wvcyt2bhdw4vbgyme/video_config.2023-06-18T15_31_35.824Z.json5"/>
+          </label>
           <div>or</div>
-          <fieldset>
-            <input type="radio" name="source" value="video"/>
-            <label>
-              <span>Enter a video URL:</span>
-              <input id="video"/>
-            </label>
-          </fieldset>
+          <input type="radio" name="source" value="video"/>
+          <label>
+            <span>Enter a video URL:</span>
+            <input id="video"/>
+          </label>
           <div><button>Load</button></div>
         </form>
       </main>
     )
+  }
+
+  if(showStatitics) {
+    const config = {
+      video: videoSrc,
+      buttons: {
+        mode: modeButtons,
+        event: eventButtons,
+        action: actionButtons,
+      },
+      modes,
+      events,
+    }
+    return <Statistics {...{ config }} /> 
   }
 
   const modeSelected = ({ label }: { label: string }) => {
@@ -201,22 +208,25 @@ export default function Home() {
     setEventOpen(true)
   }
   const actionSelected = async ({ label }: { label: string }) => {
-  const config = {
-    video: videoSrc,
-    buttons: {
-      mode: modeButtons,
-      event: eventButtons,
-      action: actionButtons,
-    },
-    modes,
-    events,
-  }
-  if(label === 'Download Config') {
+    const config = {
+      video: videoSrc,
+      buttons: {
+        mode: modeButtons,
+        event: eventButtons,
+        action: actionButtons,
+      },
+      modes,
+      events,
+    }
+    if(label === 'Download Config') {
       downloadString({
         text: JSON5.stringify(config, null, 2),
         mimetype: 'text/javascript',
         filename: `video_config.${new Date().toISOString()}.json5`,
       })
+    } else if(label === 'Statistics') {
+      setShowStatitics(true)
+
     } else if(label === 'Save To Ceramic') {
       const addresses = await provider.request({ method: 'eth_requestAccounts' })
       const accountId = await getAccountId(provider, addresses[0])
@@ -308,7 +318,7 @@ export default function Home() {
   }
   const insertMode = (info: ModeInfo) => {
     setModes((ms) => ({ ...ms, [info.start]: info }))
-  }
+  }         
   const upsertEvent = (info: EventInfo, index?: number) => {
     setEvents((es) => {
       if(index == null) {
