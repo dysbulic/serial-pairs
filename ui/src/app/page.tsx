@@ -10,11 +10,12 @@ import { ComposeClient }from '@composedb/client'
 import { definition } from '../../../ceramic/models/ProgrammingSession.runtime'
 import type { RuntimeCompositeDefinition } from '@composedb/types';
 import FoldingMenu from '@/components/FoldingMenu'
-import TrackedVideo from '@/components/TrackedVideo'
+import TrackedVideo, { httpLink } from '@/components/TrackedVideo'
 import styles from './page.module.css'
 import ModeDialog from '@/components/ModeDialog'
 import Timeline from '@/components/Timeline'
 import EventDialog from '@/components/EventDialog'
+import { metadata } from './layout'
 
 // export const metadata = {
 //   title: 'Session Review',
@@ -108,15 +109,40 @@ export default function Home() {
       <main id={styles.fileselect}>
         <img src="/banner.svg" alt="Serial Pairs"/>
         <form
-          onSubmit={(evt) => {
+          onSubmit={async (evt) => {
             evt.preventDefault()
             const form = evt.target as HTMLFormElement
-            const { files } = form.querySelector('#meta') as HTMLInputElement
-            const [input] = Array.from(files ?? [])
-            const reader = new FileReader()
-            reader.onload = (evt) => {
-              const { result } = evt.target as FileReader
-              const metadata = JSON5.parse(result as string)
+            let metadata
+            switch(form['source'].value) {
+              case 'ceramic': {
+              }
+              case 'file': {
+                const { files } = form.querySelector('#meta') as HTMLInputElement
+                const [input] = Array.from(files ?? [])
+                const reader = new FileReader()
+                metadata = new Promise((resolve) => {
+                  reader.onload = (evt) => {
+                    const { result } = evt.target as FileReader
+                    resolve(JSON5.parse(result as string))
+                  }
+                  reader.readAsText(input)
+                })
+                break
+              }
+              case 'url': {
+                const { value: url } = form.querySelector('#metaurl') as HTMLInputElement
+                const config = await (await fetch(httpLink(url))).text()
+                  console.info({ config })
+                metadata = JSON5.parse(config)
+                break
+              }
+              case 'video': {
+                const { value: src } = form.querySelector('#video') as HTMLInputElement
+                setVideoSrc(src)
+                break
+              }
+            }
+            if(metadata) {
               const { video, buttons, modes, events } = metadata
               setVideoSrc(video)
               setModeButtons(buttons.mode)
@@ -125,19 +151,27 @@ export default function Home() {
               setModes(modes)
               setEvents(events)
             }
-            reader.readAsText(input)
           }}
         >
+          <input type="radio" name="source" value="ceramic"/>
           <label>
             <span>Enter a Ceramic Stream ID:</span>
             <input id="ceramic"/>
           </label>
           <div>or</div>
+          <input type="radio" name="source" value="file"/>
           <label>
             <span>Enter a metadata file:</span>
-            <input id="meta" type="file"/>
+            <input id="metafile" type="file"/>
           </label>
           <div>or</div>
+          <input type="radio" name="source" value="url" defaultChecked/>
+          <label>
+            <span>Enter a metadata URL:</span>
+            <input id="metaurl" value="ipfs://bafybeigko6qg6og6ahwgwe3twoqxbnkywrxxifyk6wvcyt2bhdw4vbgyme/video_config.2023-06-18T15_31_35.824Z.json5"/>
+          </label>
+          <div>or</div>
+          <input type="radio" name="source" value="video"/>
           <label>
             <span>Enter a video URL:</span>
             <input id="video"/>
@@ -200,14 +234,14 @@ export default function Home() {
       `)
       type idedDoc = { document: { id: string } }
       const { id: vidId } = (
-        (progSesh?.data?.createProgrammingSession as idedDoc).document
+        (progSesh?.data?.createProgrammingSession as idedDoc).document ?? {}
       )
       if(!!vidId) {
         const configGraphQL = `
           mutation {
             createProgrammingSessionReview(input: {
               content: {
-                sessionId: "${vidId}"
+                sessionID: "${vidId}"
                 buttons: {
                   mode: [
                     ${
@@ -253,11 +287,12 @@ export default function Home() {
                 ]
               }
             })
+            { document { id } }
           }
 
         `
-        const review = composedb.executeQuery(configGraphQL)
-        console.log({ review })
+        const review = await composedb.executeQuery(configGraphQL)
+        console.log({ configGraphQL, review })
       }
     }
   }
