@@ -3,8 +3,10 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100dvh;
-  max-width: 100dvw;
+  max-height: 100dvh;
+  max-width: calc(100svw - 10rem);
+  margin-inline-start: 3rem;
+
 
   & .top {
     display: flex;

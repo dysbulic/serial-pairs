@@ -19,6 +19,7 @@ import { EventInfo, ModeInfo } from '@/types'
 export default function Home() {
   const [modeOpen, setModeOpen] = useState(false)
   const [eventOpen, setEventOpen] = useState(false)
+  const [showStatitics, setShowStatitics] = useState(false)
   const [time, setTime] = useState(0)
   const [activeMode, setActiveMode] = useState<ModeInfo>()
   const [activeEvent, setActiveEvent] = useState<EventInfo>()
