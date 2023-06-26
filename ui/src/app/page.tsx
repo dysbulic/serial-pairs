@@ -16,6 +16,7 @@ import ModeDialog from '@/components/ModeDialog'
 import Timeline from '@/components/Timeline'
 import EventDialog from '@/components/EventDialog'
 import { metadata } from './layout'
+import Statistics from '@/components/Statistics'
 
 // export const metadata = {
 //   title: 'Session Review',
@@ -93,7 +94,7 @@ export default function Home() {
   const [events, setEvents] = useState<Array<EventInfo>>([])
   const [selectedEvent, setSelectedEvent] = useState<string>()
   const [eventOpen, setEventOpen] = useState(false)
-  const [showStatitics, setShowStatitics] = useState(false)
+  const [showStatistics, setShowStatistics] = useState(false)
   const [time, setTime] = useState(0)
   const [duration, setDuration] = useState(0)
   const video = useRef<HTMLVideoElement>(null)
@@ -156,36 +157,44 @@ export default function Home() {
             }
           }}
         >
-          <input type="radio" name="source" value="ceramic"/>
-          <label>
-            <span>Enter a Ceramic Stream ID:</span>
-            <input id="ceramic"/>
-          </label>
+          <fieldset>
+            <input type="radio" name="source" value="ceramic"/>
+            <label>
+              <span>Enter a Ceramic Stream ID:</span>
+              <input id="ceramic"/>
+            </label>
+          </fieldset>
           <div>or</div>
-          <input type="radio" name="source" value="file"/>
-          <label>
-            <span>Enter a metadata file:</span>
-            <input id="metafile" type="file"/>
-          </label>
+          <fieldset>
+            <input type="radio" name="source" value="file"/>
+            <label>
+              <span>Enter a metadata file:</span>
+              <input id="metafile" type="file"/>
+            </label>
+          </fieldset>
           <div>or</div>
-          <input type="radio" name="source" value="url" defaultChecked/>
-          <label>
-            <span>Enter a metadata URL:</span>
-            <input id="metaurl" value="ipfs://bafybeigko6qg6og6ahwgwe3twoqxbnkywrxxifyk6wvcyt2bhdw4vbgyme/video_config.2023-06-18T15_31_35.824Z.json5"/>
-          </label>
+          <fieldset>
+            <input type="radio" name="source" value="url" defaultChecked/>
+            <label>
+              <span>Enter a metadata URL:</span>
+              <input id="metaurl" defaultValue="ipfs://bafybeigko6qg6og6ahwgwe3twoqxbnkywrxxifyk6wvcyt2bhdw4vbgyme/video_config.2023-06-18T15_31_35.824Z.json5"/>
+            </label>
+          </fieldset>
           <div>or</div>
-          <input type="radio" name="source" value="video"/>
-          <label>
-            <span>Enter a video URL:</span>
-            <input id="video"/>
-          </label>
+          <fieldset>
+            <input type="radio" name="source" value="video"/>
+            <label>
+              <span>Enter a video URL:</span>
+              <input id="video"/>
+            </label>
+          </fieldset>
           <div><button>Load</button></div>
         </form>
       </main>
     )
   }
 
-  if(showStatitics) {
+  if(showStatistics) {
     const config = {
       video: videoSrc,
       buttons: {
@@ -196,7 +205,7 @@ export default function Home() {
       modes,
       events,
     }
-    return <Statistics {...{ config }} /> 
+    return <Statistics {...{ config, setShowStatistics }} /> 
   }
 
   const modeSelected = ({ label }: { label: string }) => {
@@ -225,7 +234,7 @@ export default function Home() {
         filename: `video_config.${new Date().toISOString()}.json5`,
       })
     } else if(label === 'Statistics') {
-      setShowStatitics(true)
+      setShowStatistics(true)
 
     } else if(label === 'Save To Ceramic') {
       const addresses = await provider.request({ method: 'eth_requestAccounts' })
