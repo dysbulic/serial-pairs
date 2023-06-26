@@ -120,10 +120,11 @@ export default function Home() {
               case 'ceramic': {
               }
               case 'file': {
-                const { files } = form.querySelector('#meta') as HTMLInputElement
+                const { files } = form.querySelector('#metafile') as HTMLInputElement
+                console.log(files)
                 const [input] = Array.from(files ?? [])
                 const reader = new FileReader()
-                metadata = new Promise((resolve) => {
+                metadata = await new Promise((resolve) => {
                   reader.onload = (evt) => {
                     const { result } = evt.target as FileReader
                     resolve(JSON5.parse(result as string))
@@ -147,13 +148,14 @@ export default function Home() {
               }
             }
             if(metadata) {
+              console.log(metadata)
               const { video, buttons, modes, events } = metadata
-              setVideoSrc(video)
-              setModeButtons(buttons.mode)
-              setEventButtons(buttons.event)
-              setActionButtons(buttons.action)
-              setModes(modes)
-              setEvents(events)
+              if(video) setVideoSrc(video)
+              if(buttons?.mode) setModeButtons(buttons.mode)
+              if(buttons?.event) setEventButtons(buttons.event)
+              if(buttons?.action) setActionButtons(buttons.action)
+              if(modes) setModes(modes)
+              if(events) setEvents(events)
             }
           }}
         >
@@ -222,7 +224,6 @@ export default function Home() {
       buttons: {
         mode: modeButtons,
         event: eventButtons,
-        action: actionButtons,
       },
       modes,
       events,
