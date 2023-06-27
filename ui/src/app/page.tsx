@@ -101,12 +101,15 @@ export default function Home() {
         info.id ??= crypto.randomUUID()
         setter((prev: Array<Type>) => {
           const found = prev.findIndex((m) => m.id === info.id)
+          console.log({found, prev, info})
           if(found >= 0) {
             if(
               !(info as unknown as ModeInfo).mode
               && !(info as unknown as EventInfo).event
             ) {
-              return prev.splice(found, 1)
+              const out = [...prev]
+              out.splice(found, 1)
+              return out
             } else {
               return [...prev.slice(0, found), info, ...prev.slice(found + 1)]
             }

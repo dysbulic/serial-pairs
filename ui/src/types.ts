@@ -8,7 +8,7 @@ export type ButtonInfo = {
 
 export type ModeInfo = {
   id?: string
-  mode: string
+  mode?: string
   start: number
 }
 

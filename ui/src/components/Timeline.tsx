@@ -69,10 +69,12 @@ export default function Timeline(
   }
 
   sorted = modes.sort(timeSort)
+  console.debug({sorted})
 
   const spans: Array<ReactElement> = []
   sorted.forEach((current, idx) => {
-    if(idx > 0) {
+    console.log({current, last})
+    if(idx > 0 && !!last.mode) {
       spans.push(
         <Block
           key={idx}

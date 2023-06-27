@@ -39,8 +39,9 @@ export default function ModeDialog(
   }, [setVisible])
   const submit = (evt: FormEvent) => {
     evt.preventDefault()
+    console.log({mode, type})
     const out = Object.assign(mode, {
-      type: type ?? 'Unknown',
+      mode: type ?? 'Unknown',
       start,
     })
     upsertMode(out)
@@ -89,6 +90,16 @@ export default function ModeDialog(
             </tbody>
           </table>
           <section className={styles.actions}>
+            <button 
+              type="button" 
+              onClick={() =>{
+                console.log(mode)
+                upsertMode({ ...mode, mode: undefined })
+                setVisible(false)  
+              }}
+            >
+              Delete
+            </button>
             <button formAction="dialog">Cancel</button>
             <button autoFocus>Save</button>
           </section>
