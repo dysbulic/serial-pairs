@@ -77,7 +77,7 @@ export default function ModeDialog(
               onChange={({ target: { value }}) => setStart(Number(value))}
             />
           </label>
-          <table>
+          <table id={styles.tracking}>
             <tbody>
               <tr><th/><th>On Track</th><th>Off Track</th></tr>
               <tr>
