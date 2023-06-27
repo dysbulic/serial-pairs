@@ -1,45 +1,8 @@
 "use client"
 
-import { CID } from 'multiformats/cid'
 import { ForwardedRef, MutableRefObject, forwardRef, useEffect } from 'react'
+import { httpLink } from '@/utils'
 import styles from './TrackedVideo.module.css'
-
-type Maybe<T> = T | null
-
-const IPFS_LINK_PATTERN = 'https://w3s.link/ipfs/{cid}/{path}'
-
-export function httpLink(str: string): string
-export function httpLink(str: undefined | null): undefined
-
-export function httpLink(uri?: Maybe<string>) {
-  const [, origCID, path] =
-    uri?.match(/^(?:ipfs|dweb):(?:\/\/)?([^/]+)(?:\/(.*))?$/) ?? []
-
-  try {
-    if (origCID) {
-      const cid = CID.parse(origCID)
-
-      let v0CID = ''
-      try {
-        v0CID = cid.toV0().toString()
-      } catch {}
-
-      let v1CID = ''
-      try {
-        v1CID = cid.toV1().toString()
-      } catch {}
-
-      const pattern = IPFS_LINK_PATTERN;
-      return pattern
-        .replace(/{cid}/g, origCID)
-        .replace(/{v0cid}/g, v0CID)
-        .replace(/{v1cid}/g, v1CID)
-        .replace(/{path}/g, path ?? '')
-    }
-  } catch {}
-
-  return uri ?? undefined; // Image.src won't take null
-}
 
 export const TrackedVideo = (
   forwardRef((

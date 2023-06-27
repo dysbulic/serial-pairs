@@ -1,22 +1,21 @@
 "use client"
 
-// import { useAccount, useConnect } from 'wagmi'
 import { DIDSession } from 'did-session'
 import { EthereumWebAuth, getAccountId } from '@didtools/pkh-ethereum'
 import { useRef, useState } from 'react'
 import JSON5 from 'json5'
-import { jsonToGraphQLQuery as toGraphQL } from 'json-to-graphql-query'
 import { ComposeClient }from '@composedb/client'
 import { definition } from '../../../ceramic/models/ProgrammingSession.runtime'
 import type { RuntimeCompositeDefinition } from '@composedb/types';
 import FoldingMenu from '@/components/FoldingMenu'
-import TrackedVideo, { httpLink } from '@/components/TrackedVideo'
-import styles from './page.module.css'
+import TrackedVideo from '@/components/TrackedVideo'
+import { downloadString } from '@/utils'
 import ModeDialog from '@/components/ModeDialog'
 import Timeline from '@/components/Timeline'
 import EventDialog from '@/components/EventDialog'
-import { metadata } from './layout'
 import Statistics from '@/components/Statistics'
+import SourceSelect from '@/components/SourceSelect'
+import styles from './page.module.css'
 
 // export const metadata = {
 //   title: 'Session Review',
@@ -42,21 +41,15 @@ export type EventInfo = {
   explanation?: string
 }
 
-const downloadString = (
-  { text, mimetype, filename }:
-  { text: string, mimetype: string, filename: string }
-) => {
-  var blob = new Blob([text], { type: mimetype });
-
-  const a = document.createElement('a')
-  a.download = filename
-  a.href = URL.createObjectURL(blob)
-  a.dataset.downloadurl = [mimetype, a.download, a.href].join(':')
-  a.style.display = 'none'
-  document.body.appendChild(a)
-  a.click()
-  document.body.removeChild(a)
-  setTimeout(() => { URL.revokeObjectURL(a.href) }, 1500)
+export type Metadata = {
+  video: string
+  buttons: {
+    mode: Array<ButtonInfo>
+    event: Array<ButtonInfo>
+    action: Array<ButtonInfo>
+  },
+  modes: Record<string, ModeInfo>
+  events: Array<EventInfo>
 }
 
 const defaultButtons = {
@@ -109,90 +102,14 @@ export default function Home() {
 
   if(!videoSrc) {
     return (
-      <main id={styles.fileselect}>
-        <img src="/banner.svg" alt="Serial Pairs"/>
-        <form
-          onSubmit={async (evt) => {
-            evt.preventDefault()
-            const form = evt.target as HTMLFormElement
-            let metadata
-            switch(form['source'].value) {
-              case 'ceramic': {
-              }
-              case 'file': {
-                const { files } = form.querySelector('#metafile') as HTMLInputElement
-                console.log(files)
-                const [input] = Array.from(files ?? [])
-                const reader = new FileReader()
-                metadata = await new Promise((resolve) => {
-                  reader.onload = (evt) => {
-                    const { result } = evt.target as FileReader
-                    resolve(JSON5.parse(result as string))
-                  }
-                  reader.readAsText(input)
-                })
-                break
-              }
-              case 'url': {
-                const { value: url } = form.querySelector('#metaurl') as HTMLInputElement
-                if(!!url) {
-                  const config = await (await fetch(httpLink(url))).text()
-                  metadata = JSON5.parse(config)
-                }
-                break
-              }
-              case 'video': {
-                const { value: src } = form.querySelector('#video') as HTMLInputElement
-                setVideoSrc(src)
-                break
-              }
-            }
-            if(metadata) {
-              console.log(metadata)
-              const { video, buttons, modes, events } = metadata
-              if(video) setVideoSrc(video)
-              if(buttons?.mode) setModeButtons(buttons.mode)
-              if(buttons?.event) setEventButtons(buttons.event)
-              if(buttons?.action) setActionButtons(buttons.action)
-              if(modes) setModes(modes)
-              if(events) setEvents(events)
-            }
-          }}
-        >
-          <fieldset>
-            <input type="radio" name="source" value="ceramic"/>
-            <label>
-              <span>Enter a Ceramic Stream ID:</span>
-              <input id="ceramic"/>
-            </label>
-          </fieldset>
-          <div>or</div>
-          <fieldset>
-            <input type="radio" name="source" value="file"/>
-            <label>
-              <span>Enter a metadata file:</span>
-              <input id="metafile" type="file"/>
-            </label>
-          </fieldset>
-          <div>or</div>
-          <fieldset>
-            <input type="radio" name="source" value="url" defaultChecked/>
-            <label>
-              <span>Enter a metadata URL:</span>
-              <input id="metaurl" defaultValue="ipfs://bafybeigko6qg6og6ahwgwe3twoqxbnkywrxxifyk6wvcyt2bhdw4vbgyme/video_config.2023-06-18T15_31_35.824Z.json5"/>
-            </label>
-          </fieldset>
-          <div>or</div>
-          <fieldset>
-            <input type="radio" name="source" value="video"/>
-            <label>
-              <span>Enter a video URL:</span>
-              <input id="video"/>
-            </label>
-          </fieldset>
-          <div><button>Load</button></div>
-        </form>
-      </main>
+      <SourceSelect {...{
+        setVideoSrc,
+        setModeButtons,
+        setEventButtons,
+        setActionButtons,
+        setModes,
+        setEvents,
+      }}/>
     )
   }
 
