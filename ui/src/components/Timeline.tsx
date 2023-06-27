@@ -1,3 +1,5 @@
+"use client"
+
 import type { EventInfo, ModeInfo } from '@/types';
 import styles from './Timeline.module.css'
 import Tooltip from '@tippyjs/react'

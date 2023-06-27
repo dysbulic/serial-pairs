@@ -1,3 +1,5 @@
+"use client"
+
 import { CID } from 'multiformats/cid'
 import type { Metadata, ModeInfo } from '@/types'
 

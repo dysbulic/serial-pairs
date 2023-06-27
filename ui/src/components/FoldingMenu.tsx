@@ -1,6 +1,6 @@
 "use client"
 
-import { ButtonInfo } from '@/app/page'
+import { ButtonInfo } from '@/types'
 import styles from './FoldingMenu.module.css'
 import { useMemo, useState } from 'react'
 

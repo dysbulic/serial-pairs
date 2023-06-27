@@ -1,3 +1,5 @@
+"use client"
+
 import { ButtonInfo, ConfigContextProps, EventInfo, Metadata, ModeInfo } from "@/types";
 import React, { createContext, useState } from "react";
 
@@ -32,7 +34,7 @@ export const ConfigContext = createContext<ConfigContextProps>({
   setEventButtons: () => { throw new Error("Not implemented.") },
   actionButtons: defaultButtons.action,
   setActionButtons: () => { throw new Error("Not implemented.") },
-  videoSource: undefined,
+  videoSource: "undefined",
   setVideoSource: () => { throw new Error("Not implemented.") },
   modes: [],
   setModes: () => { throw new Error("Not implemented.") },
@@ -52,8 +54,8 @@ export const ConfigProvider: React.FC<React.PropsWithChildren> = (
     const [events, setEvents] = useState<Array<EventInfo>>([])
     const [duration, setDuration] = useState(0)
 
-    console.debug({ cvs: videoSource })
-
+    console.debug({ cvs: videoSource, modes })
+    
     return (
       <ConfigContext.Provider value={{
         modeButtons, setModeButtons,

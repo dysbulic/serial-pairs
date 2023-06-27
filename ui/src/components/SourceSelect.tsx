@@ -1,3 +1,5 @@
+"use client"
+
 import JSON5 from 'json5'
 import { httpLink } from '@/utils'
 import { ConfigContext } from '@/contexts/ConfigurationContext'
