@@ -2,45 +2,42 @@
 
 import { FormEvent, useEffect, useRef, useState } from 'react'
 import styles from './ModeDialog.module.css'
-import { EventInfo } from '@/app/page'
+import { EventInfo } from '@/types'
 
 export default function EventDialog(
   {
     open = false,
     types,
-    type: selectedType,
-    time,
-    setEventOpen,
+    event: incoming,
+    setVisible,
     upsertEvent
   }: {
     open?: boolean
     types: string[]
-    type?: string
-    time: number
-    setEventOpen: (open: boolean) => void
+    event: EventInfo
+    setVisible: (open: boolean) => void
     upsertEvent: (args: EventInfo) => void
   }
 ) {
-  const [type, setType] = useState(selectedType)
-  const [start, setStart] = useState(time)
+  const [type, setType] = useState(incoming.event)
+  const [start, setStart] = useState(incoming.at)
   const [explanation, setExplanation] = useState('')
   const dialogRef = useRef<HTMLDialogElement>(null)
   useEffect(() => {
     if(open) {
-      setType(selectedType)
-      setStart(time)
-      console.info({ D: dialogRef.current })
+      setType(incoming.event)
+      setStart(incoming.at)
       if(!dialogRef.current?.open) {
         dialogRef.current?.showModal()
       }
     }
-  }, [open, selectedType, time])
+  }, [open, incoming])
   useEffect(() => {
     const elem = dialogRef.current
-    const close = () => setEventOpen(false)
+    const close = () => setVisible(false)
     elem?.addEventListener('close', close)
     return () => elem?.removeEventListener('close', close)
-  }, [setEventOpen])
+  }, [setVisible])
   const submit = (evt: FormEvent) => {
     evt.preventDefault()
     upsertEvent({

@@ -31,9 +31,16 @@
     }
   }
 
-  --border: 2px solid cadetblue;
+  --border: 2px solid darkblue;
 
   & #tracking {
+    border-collapse: collapse;
+    margin-block-end: 1rem;
+
+    & th {
+      padding: 0.1rem 0.25rem;
+    }
+
     & tr:nth-of-type(1) th:nth-of-type(2) {
       border-inline-end: var(--border);
     }
@@ -48,7 +55,7 @@
       }
     }
 
-    & tr:nth-of-type(1) td:nth-of-type(1) {
+    & tr:nth-of-type(3) td:nth-of-type(1) {
       border-inline-end: var(--border);
     }
   }

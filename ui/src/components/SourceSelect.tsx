@@ -1,25 +1,28 @@
 import JSON5 from 'json5'
 import { httpLink } from '@/utils'
-import { ButtonInfo, EventInfo, ModeInfo } from "@/app/page"
+import { ConfigContext } from '@/contexts/ConfigurationContext'
+import { useContext } from 'react'
 import styles from './SourceSelect.module.css'
 
 export default function SourceSelect(
-  {
-    setVideoSrc,
+  // : {
+  //   setVideoSrc: (src: string) => void
+  //   setModeButtons: (buttons: Array<ButtonInfo>) => void
+  //   setEventButtons: (buttons: Array<ButtonInfo>) => void
+  //   setActionButtons: (buttons: Array<ButtonInfo>) => void
+  //   setModes: (modes: Array<ModeInfo>) => void
+  //   setEvents: (events: Array<EventInfo>) => void
+  // }
+) {
+  const {
+    setVideoSource,
     setModeButtons,
     setEventButtons,
     setActionButtons,
     setModes,
     setEvents,
-  }: {
-    setVideoSrc: (src: string) => void
-    setModeButtons: (buttons: Array<ButtonInfo>) => void
-    setEventButtons: (buttons: Array<ButtonInfo>) => void
-    setActionButtons: (buttons: Array<ButtonInfo>) => void
-    setModes: (modes: Array<ModeInfo>) => void
-    setEvents: (events: Array<EventInfo>) => void
-  }
-) {
+  } = useContext(ConfigContext)
+
   return (
     <main id={styles.fileselect}>
       <img src="/banner.svg" alt="Serial Pairs" />
@@ -55,18 +58,20 @@ export default function SourceSelect(
             }
             case 'video': {
               const { value: src } = form.querySelector('#video') as HTMLInputElement
-              setVideoSrc(src)
+              console.info({ ivs: src })
+              setVideoSource(src)
               break
             }
           }
           if (metadata) {
-            const { video, buttons, modes, events } = metadata
-            if (video) setVideoSrc(video)
-            if (buttons?.mode) setModeButtons(buttons.mode)
-            if (buttons?.event) setEventButtons(buttons.event)
-            if (buttons?.action) setActionButtons(buttons.action)
-            if (modes) setModes(modes)
-            if (events) setEvents(events)
+            const { video: videoSource, buttons, modes, events } = metadata
+            console.info({ vs: videoSource })
+            if(videoSource) setVideoSource(videoSource)
+            if(buttons?.mode) setModeButtons(buttons.mode)
+            if(buttons?.event) setEventButtons(buttons.event)
+            if(buttons?.action) setActionButtons(buttons.action)
+            if(modes) setModes(modes)
+            if(events) setEvents(events)
           }
         }}
       >

@@ -1,4 +1,5 @@
 import { CID } from 'multiformats/cid'
+import type { Metadata, ModeInfo } from '@/types'
 
 type Maybe<T> = T | null
 
@@ -6,6 +7,7 @@ const IPFS_LINK_PATTERN = 'https://w3s.link/ipfs/{cid}/{path}'
 
 export function httpLink(str: string): string
 export function httpLink(str: undefined | null): undefined
+export function httpLink(str?: string): string | undefined
 
 export function httpLink(uri?: Maybe<string>) {
   const [, origCID, path] =
@@ -53,3 +55,63 @@ export const downloadString = (
   document.body.removeChild(a)
   setTimeout(() => { URL.revokeObjectURL(a.href) }, 1500)
 }
+
+export const configToGraphQL = (config: Metadata) => (`
+  mutation {
+    createProgrammingSessionReview(input: {
+      content: {
+        sessionID: "${config.video}"
+        buttons: {
+          ${!!config.buttons.mode && (`
+            mode: [
+              ${
+                config.buttons.mode.map(({ label, icon, bg }) => (
+                  `{ label: "${label}", icon: "${icon}", bg: "${bg}" }`
+                ))
+                .join(',\n')
+              }
+            ]
+          `)}
+          ${!!config.buttons.event && (`
+            event: [
+              ${
+                config.buttons.event.map(({ label, icon, bg }) => (
+                  `{ label: "${label}", icon: "${icon}", bg: "${bg}" }`
+                ))
+                .join(',\n')
+              }
+            ]
+          `)}
+          ${!!config.buttons.action && (`
+            action: [
+              ${
+                config.buttons.action.map(({ label, icon, bg }) => (
+                  `{ label: "${label}", icon: "${icon}", bg: "${bg}" }`
+                ))
+                .join(',\n')
+              }
+            ]
+          `)}
+        }
+        modes: [
+          ${
+            Object.entries<ModeInfo>(config.modes).map(([key, { mode, start }]) => (
+              `{ mode: "${mode}", start: ${start} }`
+            ))
+            .join(',\n')
+          }
+
+        ]
+        events: [
+          ${
+            config.events.map(({ event, at, explanation }) => (
+              `{ event: "${event}", at: ${at}, explanation: "${explanation}" }`
+            ))
+            .join(',\n')
+          }
+        ]
+      }
+    })
+    { document { id } }
+  }
+`)

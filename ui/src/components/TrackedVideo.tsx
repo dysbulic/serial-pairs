@@ -1,19 +1,16 @@
 "use client"
 
-import { ForwardedRef, MutableRefObject, forwardRef, useEffect } from 'react'
+import { ForwardedRef, MutableRefObject, forwardRef, useContext, useEffect } from 'react'
 import { httpLink } from '@/utils'
 import styles from './TrackedVideo.module.css'
+import { ConfigContext } from '@/contexts/ConfigurationContext'
 
-export const TrackedVideo = (
-  forwardRef((
-    { src, setTime, setDuration }:
-    {
-      src: string
-      setTime: (time: number) => void
-      setDuration: (time: number) => void
-    },
-    video: ForwardedRef<HTMLVideoElement>
+export const TrackedVideo = forwardRef(
+  (
+    { setTime }: { setTime: (t: number) => void },
+    video: ForwardedRef<HTMLVideoElement>,
   ) => {
+    const { videoSource, setDuration } = useContext(ConfigContext)
     useEffect(() => {
       const elem = (video as MutableRefObject<HTMLVideoElement>)?.current
       const update = () => {
@@ -33,15 +30,16 @@ export const TrackedVideo = (
       return () => elem?.removeEventListener('loadedmetadata', loaded)
     }, [setDuration, video])
 
+    console.debug({ videoSource })
     return (
       <video className={styles.video} controls ref={video}>
         <source
-          src={httpLink(src)}
-          type={`video/${src.replace(/.*\./, '')}`}
+          src={httpLink(videoSource)}
+          type={`video/${videoSource?.replace(/.*\./, '')}`}
         />
       </video>
     )
-  })
+  }
 )
 
 TrackedVideo.displayName = 'TrackedVideo'

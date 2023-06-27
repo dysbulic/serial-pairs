@@ -1,17 +1,19 @@
-import type { EventInfo, ModeInfo } from '@/app/page';
+import type { EventInfo, ModeInfo } from '@/types';
 import styles from './Timeline.module.css'
 import Tooltip from '@tippyjs/react'
-import { ReactElement } from 'react'
+import { ReactElement, useContext } from 'react'
 import Markdown from 'react-markdown'
 import remarkGFM from 'remark-gfm'
+import { ConfigContext } from '@/contexts/ConfigurationContext';
 
 export const Block = (
-  { current, last, duration, bg }:
+  { current, last, duration, bg, upsertMode }:
   { 
     current: ModeInfo
     last: ModeInfo
     duration: number
     bg: string
+    upsertMode: (info: ModeInfo) => void
   }
 ) => {
   const size = (
@@ -25,59 +27,55 @@ export const Block = (
           '--size': `${size}%`,
           '--bg': bg,
         } as React.CSSProperties}
+        onClick={() => upsertMode(last)}
       />
     </Tooltip>
   )
 }
 
-const timeSort = (a: string, b: string) => (
-  Number(a) - Number(b)
+const timeSort = (a: ModeInfo, b: ModeInfo) => (
+  a.start - b.start
 )
 
 export default function Timeline(
   {
-    modes: input, events, time, setTime,
-    duration, modeColors, eventIcons,
+    time, setTime, modeColors, eventIcons, upsertMode,
   }:
   {
-    modes: Record<string, ModeInfo>
-    events: Array<EventInfo>
     time: number
     setTime: (time: number) => void
-    duration: number
     modeColors: Record<string, string>
     eventIcons: Record<string, string>
+    upsertMode: (info: ModeInfo, index?: number) => void
   }
 ) {
-  const modes = { ...input }
+  const { modes, events, duration } = useContext(ConfigContext)
 
-  let times = Object.keys(modes).sort(timeSort)
-  if(times.length === 0 || times[0] !== '0') {
-    modes['0'] = { mode: 'Unknown', start: 0 }
-    times.unshift('0')
+  let sorted = modes.sort(timeSort)
+  if(sorted.length === 0 || sorted[0].start !== 0) {
+    modes.unshift({ mode: 'Unknown', start: 0 })
   }
 
-  let last = modes[times.at(-1)!];
+  let last = sorted.at(-1)!
   if(last.start < time) {
-    last = { mode: 'Unknown', start: time }
-    modes[time] = last
+    modes.push({ mode: 'Unknown', start: time })
   }
 
-  if(last.start < duration) {
-    last = { mode: 'Unknown', start: duration }
-    modes[duration] = last
+  const dur = duration ?? 0
+  if(last.start < dur) {
+    modes.push({ mode: 'Unknown', start: dur })
   }
 
-  times = Object.keys(modes).sort(timeSort)
+  sorted = modes.sort(timeSort)
 
   const spans: Array<ReactElement> = []
-  times.forEach((id, idx) => {
-    const current = modes[id]
+  sorted.forEach((current, idx) => {
     if(idx > 0) {
       spans.push(
         <Block
           key={idx}
-          {...{ current, last, duration }}
+          {...{ current, last, upsertMode }}
+          duration={dur}
           bg={modeColors[last.mode]}
         />
       )
@@ -106,7 +104,7 @@ export default function Timeline(
             className={styles.event}
             src={eventIcons[event]}
             alt={event}
-            style={{ '--pos': `${at * 100 / duration}%` } as React.CSSProperties}
+            style={{ '--pos': `${at * 100 / (duration ?? 1)}%` } as React.CSSProperties}
           />
         </Tooltip>
       ))}

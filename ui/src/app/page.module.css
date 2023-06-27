@@ -4,6 +4,7 @@
   align-items: center;
   justify-content: center;
   max-height: 100dvh;
+  max-width: 100dvw;
 
   & .top {
     display: flex;

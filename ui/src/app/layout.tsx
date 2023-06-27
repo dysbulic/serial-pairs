@@ -1,7 +1,7 @@
 import './globals.css'
 import 'tippy.js/dist/tippy.css'
 import { Inter } from 'next/font/google'
-import Head from 'next/head'
+import ConfigWrapped from '@/contexts/ConfigWrapped'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -17,7 +17,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <ConfigWrapped>{children}</ConfigWrapped>
+      </body>
     </html>
   )
 }
