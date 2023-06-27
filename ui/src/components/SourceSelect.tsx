@@ -38,7 +38,6 @@ export default function SourceSelect(
             }
             case 'file': {
               const { files } = form.querySelector('#metafile') as HTMLInputElement
-              console.log(files)
               const [input] = Array.from(files ?? [])
               const reader = new FileReader()
               metadata = await new Promise((resolve) => {
@@ -60,14 +59,12 @@ export default function SourceSelect(
             }
             case 'video': {
               const { value: src } = form.querySelector('#video') as HTMLInputElement
-              console.info({ ivs: src })
               setVideoSource(src)
               break
             }
           }
           if (metadata) {
             const { video: videoSource, buttons, modes, events } = metadata
-            console.info({ vs: videoSource })
             if(videoSource) setVideoSource(videoSource)
             if(buttons?.mode) setModeButtons(buttons.mode)
             if(buttons?.event) setEventButtons(buttons.event)
@@ -97,7 +94,7 @@ export default function SourceSelect(
           <input type="radio" name="source" value="url" defaultChecked />
           <label>
             <span>Enter a metadata URL:</span>
-            <input id="metaurl" defaultValue="ipfs://bafybeigko6qg6og6ahwgwe3twoqxbnkywrxxifyk6wvcyt2bhdw4vbgyme/video_config.2023-06-18T15_31_35.824Z.json5" />
+            <input id="metaurl" defaultValue="ipfs://bafybeibixwqnzlfgjkojqmhw3ifemcnubomsdgouqzhuakntxclq2o3inm/video_config.2023-06-27T19%2021%2025.206Z.json5" />
           </label>
         </fieldset>
         <div>or</div>

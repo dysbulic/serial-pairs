@@ -30,7 +30,6 @@ export const TrackedVideo = forwardRef(
       return () => elem?.removeEventListener('loadedmetadata', loaded)
     }, [setDuration, video])
 
-    console.debug({ videoSource })
     return (
       <video className={styles.video} controls ref={video}>
         <source

@@ -103,67 +103,65 @@ export default function Home() {
   const upsertEvent = upsertFunction<EventInfo>(setEvents)
 
   return (
-    <ConfigProvider>
-      <main className={styles.main}>
-        <section className={styles.top}>
-          <aside className={styles.sidebar}>
-            <FoldingMenu
-              label="Mode"
-              icon="/lens.svg"
-              buttons={modeButtons}
-              onSelect={modeChanged}
-            />
-            <FoldingMenu
-              label="Event"
-              icon="/gavel.svg"
-              buttons={eventButtons}
-              onSelect={eventSelected}
-              elemStyle={{ '--fg': 'black' } as React.CSSProperties}
-            />
-            <FoldingMenu
-              label="Action"
-              icon="/actions.svg"
-              buttons={actionButtons}
-              onSelect={actionSelected}
-              elemStyle={{ '--fg': 'black' } as React.CSSProperties}
-            />
-          </aside>
-          <TrackedVideo {...{ setTime }} ref={video}/>
-          {newMode && (
-            <ModeDialog
-              open={modeOpen}
-              setVisible={setModeOpen}
-              {...{ upsertMode }}
-              types={modeButtons.map(({ label }) => label)}
-              mode={newMode}
-            />
-          )}
-          {newEvent && (
-            <EventDialog
-              open={eventOpen}
-              setVisible={setEventOpen}
-              {...{ upsertEvent }}
-              types={eventButtons.map(({ label }) => label)}
-              event={newEvent}
-            />
-          )}
-        </section>
-        <section className={styles.bottom}>
-          <Timeline
-            {...{ time, upsertMode }}
-            setTime={(t: number) => {
-              setTime(t)
-              if(video.current) video.current.currentTime = t
-            }}
-            modeColors={Object.fromEntries(
-              modeButtons.map(({ label, bg }) => [label, bg])
-            )}
-            eventIcons={Object.fromEntries(
-              eventButtons.map(({ label, icon }) => [label, icon])
-            )}
+    <main className={styles.main}>
+      <section className={styles.top}>
+        <aside className={styles.sidebar}>
+          <FoldingMenu
+            label="Mode"
+            icon="/lens.svg"
+            buttons={modeButtons}
+            onSelect={modeChanged}
           />
-        </section>
-      </main>
-    </ConfigProvider>
+          <FoldingMenu
+            label="Event"
+            icon="/gavel.svg"
+            buttons={eventButtons}
+            onSelect={eventSelected}
+            elemStyle={{ '--fg': 'black' } as React.CSSProperties}
+          />
+          <FoldingMenu
+            label="Action"
+            icon="/actions.svg"
+            buttons={actionButtons}
+            onSelect={actionSelected}
+            elemStyle={{ '--fg': 'black' } as React.CSSProperties}
+          />
+        </aside>
+        <TrackedVideo {...{ setTime }} ref={video}/>
+        {newMode && (
+          <ModeDialog
+            open={modeOpen}
+            setVisible={setModeOpen}
+            {...{ upsertMode }}
+            types={modeButtons.map(({ label }) => label)}
+            mode={newMode}
+          />
+        )}
+        {newEvent && (
+          <EventDialog
+            open={eventOpen}
+            setVisible={setEventOpen}
+            {...{ upsertEvent }}
+            types={eventButtons.map(({ label }) => label)}
+            event={newEvent}
+          />
+        )}
+      </section>
+      <section className={styles.bottom}>
+        <Timeline
+          {...{ time, upsertMode }}
+          setTime={(t: number) => {
+            setTime(t)
+            if(video.current) video.current.currentTime = t
+          }}
+          modeColors={Object.fromEntries(
+            modeButtons.map(({ label, bg }) => [label, bg])
+          )}
+          eventIcons={Object.fromEntries(
+            eventButtons.map(({ label, icon }) => [label, icon])
+          )}
+        />
+      </section>
+    </main>
   )
 }
