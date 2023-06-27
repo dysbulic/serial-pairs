@@ -24,8 +24,8 @@ export default function Home() {
   const [eventOpen, setEventOpen] = useState(false)
   const [showStatistics, setShowStatistics] = useState(false)
   const [time, setTime] = useState(0)
-  const [newMode, setNewMode] = useState<ModeInfo>()
-  const [newEvent, setNewEvent] = useState<EventInfo>()
+  const [activeMode, setActiveMode] = useState<ModeInfo>()
+  const [activeEvent, setActiveEvent] = useState<EventInfo>()
   const video = useRef<HTMLVideoElement>(null)
   // const [provider, setProvider] = useState(
   //   typeof window !== 'undefined' ? (
@@ -50,11 +50,11 @@ export default function Home() {
   }
 
   const modeChanged = ({ label }: { label: string }) => {
-    setNewMode({ mode: label, start: time })
+    setActiveMode({ mode: label, start: time })
     setModeOpen(true)
   }
   const eventSelected = ({ label }: { label: string }) => {
-    setNewEvent({ event: label, at: time })
+    setActiveEvent({ event: label, at: time })
     setEventOpen(true)
   }
   const actionSelected = async ({ label }: { label: string }) => {
@@ -79,28 +79,46 @@ export default function Home() {
       throw new Error(`Unknown Action: "${label}".`)
     }
   }
+
+  /* Method for inserting objects into the modes and events lists.
+   * If `delay` is `true`, the object is opened in the appropriate
+   * editing modal. Otherwise the `id` is checked against existing
+   * ids to see if this is an update. If it's an update & the label
+   * (be it `mode` or `event`) isn't set then the element is
+   * deleted. Otherwise the existing elment is replaced. If it is a
+   * new element it is appended to the list.
+   */
   function upsertFunction<Type extends { id?: string }>(
-    setter: (val: (prev: Array<Type>) => Array<Type>) => void
+    setter: (val: (prev: Array<Type>) => Array<Type>) => void,
+    activate: (info: Type) => void,
+    setVisible: (vis: boolean) => void,
   ) {
-    return (info: Type, index?: number) => {
-      info.id ??= crypto.randomUUID()
-      setter((prev: Array<Type>) => {
-        if(index == null) {
-          if(info != null) {
-            return [...prev, info] as Array<Type>
+    return (info: Type, delay: boolean = false) => {
+      if(delay) {
+        activate(info)
+        setVisible(true)
+      } else {
+        info.id ??= crypto.randomUUID()
+        setter((prev: Array<Type>) => {
+          const found = prev.findIndex((m) => m.id === info.id)
+          if(found >= 0) {
+            if(
+              !(info as unknown as ModeInfo).mode
+              && !(info as unknown as EventInfo).event
+            ) {
+              return prev.splice(found, 1)
+            } else {
+              return [...prev.slice(0, found), info, ...prev.slice(found + 1)]
+            }
           } else {
-            return prev as Array<Type>
+            return [...prev, info]
           }
-        } else if(info == null) {
-          return prev.splice(index, 1) as Array<Type>
-        } else {
-          return [...prev.slice(0, index), info, ...prev.slice(index + 1)] as Array<Type>
-        }
-      })
+        })
+      }
     }
   }
-  const upsertMode = upsertFunction<ModeInfo>(setModes)
-  const upsertEvent = upsertFunction<EventInfo>(setEvents)
+  const upsertMode = upsertFunction<ModeInfo>(setModes, setActiveMode, setModeOpen)
+  const upsertEvent = upsertFunction<EventInfo>(setEvents, setActiveEvent, setEventOpen)
 
   return (
     <main className={styles.main}>
@@ -128,22 +146,22 @@ export default function Home() {
           />
         </aside>
         <TrackedVideo {...{ setTime }} ref={video}/>
-        {newMode && (
+        {activeMode && (
           <ModeDialog
             open={modeOpen}
             setVisible={setModeOpen}
             {...{ upsertMode }}
             types={modeButtons.map(({ label }) => label)}
-            mode={newMode}
+            mode={activeMode}
           />
         )}
-        {newEvent && (
+        {activeEvent && (
           <EventDialog
             open={eventOpen}
             setVisible={setEventOpen}
             {...{ upsertEvent }}
             types={eventButtons.map(({ label }) => label)}
-            event={newEvent}
+            event={activeEvent}
           />
         )}
       </section>

@@ -15,7 +15,7 @@ export const Block = (
     last: ModeInfo
     duration: number
     bg: string
-    upsertMode: (info: ModeInfo) => void
+    upsertMode: (info: ModeInfo, delay: boolean) => void
   }
 ) => {
   const size = (
@@ -29,7 +29,7 @@ export const Block = (
           '--size': `${size}%`,
           '--bg': bg,
         } as React.CSSProperties}
-        onClick={() => upsertMode(last)}
+        onClick={() => upsertMode(last, true)}
       />
     </Tooltip>
   )
@@ -48,7 +48,7 @@ export default function Timeline(
     setTime: (time: number) => void
     modeColors: Record<string, string>
     eventIcons: Record<string, string>
-    upsertMode: (info: ModeInfo, index?: number) => void
+    upsertMode: (info: ModeInfo, delay: boolean) => void
   }
 ) {
   const { modes, events, duration } = useContext(ConfigContext)

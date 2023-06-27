@@ -1,6 +1,4 @@
-"use client"
-
-import { ButtonInfo, ConfigContextProps, EventInfo, Metadata, ModeInfo } from "@/types";
+import { ConfigContextProps, EventInfo, ModeInfo } from "@/types";
 import React, { createContext, useState } from "react";
 
 export const defaultButtons = {
