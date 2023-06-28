@@ -1,8 +1,10 @@
 "use client"
 
-import { FormEvent, useEffect, useRef, useState } from 'react'
+import React, { FormEvent, useContext, useEffect, useRef, useState } from 'react'
 import styles from './ModeDialog.module.css'
 import { EventInfo } from '@/types'
+import { ConfigContext } from '@/contexts/ConfigurationContext'
+import { Icon } from './FoldingMenu'
 
 export default function EventDialog(
   {
@@ -23,6 +25,9 @@ export default function EventDialog(
   const [start, setStart] = useState(incoming.at)
   const [explanation, setExplanation] = useState('')
   const dialogRef = useRef<HTMLDialogElement>(null)
+  const { eventButtons } = useContext(ConfigContext)
+  const { icon } = eventButtons.find((b) => b.label === type) ?? {}
+
   useEffect(() => {
     if(open) {
       setType(incoming.event)
@@ -32,14 +37,17 @@ export default function EventDialog(
       }
     }
   }, [open, incoming])
+
   useEffect(() => {
     const elem = dialogRef.current
     const close = () => setVisible(false)
     elem?.addEventListener('close', close)
     return () => elem?.removeEventListener('close', close)
   }, [setVisible])
+
   const submit = (evt: FormEvent) => {
     evt.preventDefault()
+    console.info({ 'SUBMITTED': dialogRef.current?.returnValue })
     upsertEvent({
       event: type ?? 'Unknown',
       at: start,
@@ -49,8 +57,15 @@ export default function EventDialog(
   }
 
   return (
-    <dialog ref={dialogRef} className={styles.dialog}>
-      <header><h1>Mode Setting</h1></header>
+    <dialog
+      ref={dialogRef}
+      className={styles.dialog}
+      style={{ '--bg': '#000000DD' } as React.CSSProperties}
+    >
+      <header>
+        {icon && <Icon src={icon}/>}
+        <h1>Event: {type}</h1>
+      </header>
       <main>
         <form onSubmit={submit}>
           <label>
@@ -83,7 +98,17 @@ export default function EventDialog(
             />
           </label>
           <section className={styles.actions}>
-            <button formAction="dialog">Cancel</button>
+          <button 
+              className={styles.delete}
+              type="button" 
+              onClick={() =>{
+                upsertEvent({ ...incoming, event: undefined })
+                dialogRef.current?.close()
+              }}
+            >
+              Delete
+            </button>
+            <button formMethod="dialog">Cancel</button>
             <button autoFocus>Save</button>
           </section>
         </form>

@@ -7,6 +7,7 @@ import { ReactElement, useContext } from 'react'
 import Markdown from 'react-markdown'
 import remarkGFM from 'remark-gfm'
 import { ConfigContext } from '@/contexts/ConfigurationContext';
+import { s2Clock } from '@/utils';
 
 export const Block = (
   { current, last, duration, bg, upsertMode }:
@@ -22,7 +23,7 @@ export const Block = (
     (current.start - last.start) * 100 / duration
   )
   return (
-    <Tooltip content={`${last.mode}: ${last.start}–${current.start}`}>
+    <Tooltip content={`${last.mode}: ${s2Clock(last.start)}–${s2Clock(current.start)}`}>
       <span
         className={styles.block}
         style={{
@@ -74,7 +75,6 @@ export default function Timeline(
 
   const spans: Array<ReactElement> = []
   sorted.forEach((current, idx) => {
-    console.log({current, last})
     if(idx > 0 && !!last.mode) {
       spans.push(
         <Block
@@ -93,7 +93,7 @@ export default function Timeline(
       {spans}
       {events.map((event, idx) => {
         const { at, event: type, explanation } = event
-        let markdown = `## ${at}: ${type}`
+        let markdown = `## ${s2Clock(at)}: ${type}`
         if(!!explanation) {
           markdown = (
 `${markdown}
@@ -102,23 +102,25 @@ ${explanation}`
           )
         }
         return (
-          <Tooltip
-            key={idx}
-            content={
-              <Markdown remarkPlugins={[remarkGFM]}>
-                {markdown}
-              </Markdown>
-            }
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              className={styles.event}
-              src={eventIcons[type]}
-              alt={type}
-              style={{ '--pos': `${at * 100 / (duration ?? 1)}%` } as React.CSSProperties}
-              onClick={() => upsertEvent(event, true)}
-            />
-          </Tooltip>
+          type && (
+            <Tooltip
+              key={idx}
+              content={
+                <Markdown remarkPlugins={[remarkGFM]}>
+                  {markdown}
+                </Markdown>
+              }
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                className={styles.event}
+                src={eventIcons[type]}
+                alt={type}
+                style={{ '--pos': `${at * 100 / (duration ?? 1)}%` } as React.CSSProperties}
+                onClick={() => upsertEvent(event, true)}
+              />
+            </Tooltip>
+          )
         )
       })}
       <input

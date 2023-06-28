@@ -58,6 +58,18 @@ export const downloadString = (
   setTimeout(() => { URL.revokeObjectURL(a.href) }, 1500)
 }
 
+export const s2Clock = (seconds: number) => (
+  new Date(seconds * 1000)
+  .toTimeString()
+  .split(' ')[0]
+  .replace(/^[0:]+/g, '')
+  || '0'
+)
+
+export const sspan2Clock = (start: number, end: number) => {
+
+}
+
 export const configToGraphQL = (config: Metadata) => (`
   mutation {
     createProgrammingSessionReview(input: {

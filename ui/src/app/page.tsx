@@ -154,7 +154,6 @@ export default function Home() {
             open={modeOpen}
             setVisible={setModeOpen}
             {...{ upsertMode }}
-            types={modeButtons.map(({ label }) => label)}
             mode={activeMode}
           />
         )}

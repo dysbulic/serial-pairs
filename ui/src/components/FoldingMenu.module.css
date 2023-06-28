@@ -5,6 +5,7 @@
 
   list-style: none;
   position: relative;
+  margin-block: 0;
 
   & > li {
     & > .picButton {

@@ -14,7 +14,7 @@ export type ModeInfo = {
 
 export type EventInfo = {
   id?: string
-  event: string
+  event?: string
   at: number
   explanation?: string
 }

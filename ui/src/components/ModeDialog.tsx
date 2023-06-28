@@ -1,19 +1,18 @@
 "use client"
 
-import { FormEvent, useEffect, useRef, useState } from 'react'
+import React, { FormEvent, useContext, useEffect, useRef, useState } from 'react'
 import styles from './ModeDialog.module.css'
 import { ModeInfo } from '@/types'
+import { ConfigContext } from '@/contexts/ConfigurationContext'
 
 export default function ModeDialog(
   {
     open = false,
-    types,
     mode,
     setVisible,
-    upsertMode
+    upsertMode,
   }: {
     open?: boolean
-    types: string[]
     mode: ModeInfo
     setVisible: (open: boolean) => void
     upsertMode: (args: ModeInfo) => void
@@ -22,6 +21,10 @@ export default function ModeDialog(
   const [type, setType] = useState(mode.mode)
   const [start, setStart] = useState(mode.start)
   const dialogRef = useRef<HTMLDialogElement>(null)
+  const { modeButtons } = useContext(ConfigContext)
+  const types = modeButtons.map(({ label }) => label)
+  const { bg } = modeButtons.find((b) => b.label === mode.mode) ?? {}
+
   useEffect(() => {
     if(open) {
       setType(mode.mode)
@@ -31,12 +34,14 @@ export default function ModeDialog(
       }
     }
   }, [open, mode])
+
   useEffect(() => {
     const elem = dialogRef.current
     const close = () => setVisible(false)
     elem?.addEventListener('close', close)
     return () => elem?.removeEventListener('close', close)
   }, [setVisible])
+
   const submit = (evt: FormEvent) => {
     evt.preventDefault()
     const out = Object.assign(mode, {
@@ -48,8 +53,12 @@ export default function ModeDialog(
   }
 
   return (
-    <dialog ref={dialogRef} className={styles.dialog}>
-      <header><h1>Mode Setting</h1></header>
+    <dialog
+      ref={dialogRef}
+      className={styles.dialog}
+      style={{ '--bg': bg } as React.CSSProperties}
+    >
+      <header><h1>Mode: {type}</h1></header>
       <main>
         <form onSubmit={submit}>
           <label>
@@ -90,16 +99,16 @@ export default function ModeDialog(
           </table>
           <section className={styles.actions}>
             <button 
+              className={styles.delete}
               type="button" 
               onClick={() =>{
-                console.log(mode)
                 upsertMode({ ...mode, mode: undefined })
-                setVisible(false)  
+                dialogRef.current?.close()
               }}
             >
               Delete
             </button>
-            <button formAction="dialog">Cancel</button>
+            <button formMethod="dialog">Cancel</button>
             <button autoFocus>Save</button>
           </section>
         </form>

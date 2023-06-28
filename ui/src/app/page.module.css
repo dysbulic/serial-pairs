@@ -14,6 +14,9 @@
       display: flex;
       flex-direction: column;
       justify-content: space-evenly;
+      position: absolute;
+      top: 0;
+      left: 0;
     }
   }
 

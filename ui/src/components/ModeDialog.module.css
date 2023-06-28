@@ -1,7 +1,27 @@
 .dialog {
-  & h1 {
-    margin-block-start: 0;
-    text-align: center;
+  background-color: var(--bg);
+
+  & > * {
+    padding: 0.25rem;
+    backdrop-filter: hue-rotate(180) saturate(250%) brightness(150%);
+    filter: invert(1);
+  }
+
+  & header {
+    display: flex;
+    justify-content: center;
+
+    & img {
+      max-width: 4rem;
+      max-height: 4rem;
+      filter: invert(1);
+    }
+
+    & h1 {
+      margin-block-start: 0;
+      margin-inline-start: 0.5rem;
+      text-align: center;
+    }
   }
 
   & label {
@@ -28,6 +48,10 @@
 
     & button {
       margin-left: 0.5rem;
+    }
+
+    & .delete {
+      margin-inline-end: auto;
     }
   }
 

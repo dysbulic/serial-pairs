@@ -1,10 +1,10 @@
 "use client"
 
 import { ButtonInfo } from '@/types'
-import styles from './FoldingMenu.module.css'
 import { useMemo, useState } from 'react'
+import styles from './FoldingMenu.module.css'
 
-const Icon = ({ src, alt = '' }: { src: string, alt?: string }) => {
+export const Icon = ({ src, alt = '' }: { src: string, alt?: string }) => {
   if(src.includes('.')) {
     return <img {...{ src, alt }}/>
   }
@@ -29,7 +29,7 @@ export default function FoldingMenu(
   }
 ) {
   const [open, setOpen] = useState(false)
-  const id=useMemo(()=>Math.random().toString(),[])
+  const id=useMemo(() => crypto.randomUUID(), [])
 
 
   return (
