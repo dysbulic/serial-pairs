@@ -94,7 +94,7 @@ export default function SourceSelect(
           <input type="radio" name="source" value="url" defaultChecked />
           <label>
             <span>Enter a metadata URL:</span>
-            <input id="metaurl" defaultValue="ipfs://bafybeibixwqnzlfgjkojqmhw3ifemcnubomsdgouqzhuakntxclq2o3inm/video_config.2023-06-27T19%2021%2025.206Z.json5" />
+            <input id="metaurl" defaultValue="ipfs://bafybeihavkdijdwgzivpr6ieieggv4tphjqkciok4xsd6pul7nvvno375q/video_config.2023-06-28T06_46_34.405Z.json5" />
           </label>
         </fieldset>
         <div>or</div>

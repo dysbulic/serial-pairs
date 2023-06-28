@@ -39,7 +39,6 @@ export default function ModeDialog(
   }, [setVisible])
   const submit = (evt: FormEvent) => {
     evt.preventDefault()
-    console.log({mode, type})
     const out = Object.assign(mode, {
       mode: type ?? 'Unknown',
       start,

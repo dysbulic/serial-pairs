@@ -170,7 +170,7 @@ export default function Home() {
       </section>
       <section className={styles.bottom}>
         <Timeline
-          {...{ time, upsertMode }}
+          {...{ time, upsertMode, upsertEvent }}
           setTime={(t: number) => {
             setTime(t)
             if(video.current) video.current.currentTime = t

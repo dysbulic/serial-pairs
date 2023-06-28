@@ -41,7 +41,7 @@ const timeSort = (a: ModeInfo, b: ModeInfo) => (
 
 export default function Timeline(
   {
-    time, setTime, modeColors, eventIcons, upsertMode,
+    time, setTime, modeColors, eventIcons, upsertMode, upsertEvent,
   }:
   {
     time: number
@@ -49,6 +49,7 @@ export default function Timeline(
     modeColors: Record<string, string>
     eventIcons: Record<string, string>
     upsertMode: (info: ModeInfo, delay: boolean) => void
+    upsertEvent: (info: EventInfo, delay: boolean) => void
   }
 ) {
   const { modes, events, duration } = useContext(ConfigContext)
@@ -90,28 +91,36 @@ export default function Timeline(
   return (
     <section className={styles.colorbar}>
       {spans}
-      {events.map(({ at, event, explanation }, idx) => (
-        <Tooltip
-          key={idx}
-          content={
-            <Markdown remarkPlugins={[remarkGFM]}>
-              {`
-                ## ${at}: ${event}
+      {events.map((event, idx) => {
+        const { at, event: type, explanation } = event
+        let markdown = `## ${at}: ${type}`
+        if(!!explanation) {
+          markdown = (
+`${markdown}
 
-                ${explanation}
-              `}
-            </Markdown>
-          }
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            className={styles.event}
-            src={eventIcons[event]}
-            alt={event}
-            style={{ '--pos': `${at * 100 / (duration ?? 1)}%` } as React.CSSProperties}
-          />
-        </Tooltip>
-      ))}
+${explanation}`
+          )
+        }
+        return (
+          <Tooltip
+            key={idx}
+            content={
+              <Markdown remarkPlugins={[remarkGFM]}>
+                {markdown}
+              </Markdown>
+            }
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              className={styles.event}
+              src={eventIcons[type]}
+              alt={type}
+              style={{ '--pos': `${at * 100 / (duration ?? 1)}%` } as React.CSSProperties}
+              onClick={() => upsertEvent(event, true)}
+            />
+          </Tooltip>
+        )
+      })}
       <input
         type="range"
         min="0" max={duration}
