@@ -21,7 +21,8 @@
   },
   "homepage": "https://github.com/dysbulic/serial-pairs#readme",
   "workspaces": [
-    "contracts", "ui"
+    "contracts",
+    "ui"
   ],
   "resolutions": {
     "ethers": "6.4.0"
