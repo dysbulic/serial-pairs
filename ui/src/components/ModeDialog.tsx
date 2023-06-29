@@ -8,7 +8,7 @@ import { ConfigContext } from '@/contexts/ConfigurationContext'
 export default function ModeDialog(
   {
     open = false,
-    mode,
+    mode: incoming,
     setVisible,
     upsertMode,
   }: {
@@ -18,39 +18,49 @@ export default function ModeDialog(
     upsertMode: (args: ModeInfo) => void
   }
 ) {
-  const [type, setType] = useState(mode.mode)
-  const [start, setStart] = useState(mode.start)
+  const [type, setType] = useState(incoming.mode)
+  const [start, setStart] = useState(incoming.start)
   const dialogRef = useRef<HTMLDialogElement>(null)
   const { modeButtons } = useContext(ConfigContext)
   const types = modeButtons.map(({ label }) => label)
-  const { bg } = modeButtons.find((b) => b.label === mode.mode) ?? {}
+  const { bg } = modeButtons.find((b) => b.label === type) ?? {}
 
   useEffect(() => {
     if(open) {
-      setType(mode.mode)
-      setStart(mode.start)
+      setType(incoming.mode)
+      setStart(incoming.start)
       if(!dialogRef.current?.open) {
         dialogRef.current?.showModal()
       }
     }
-  }, [open, mode])
+  }, [open, incoming])
 
   useEffect(() => {
     const elem = dialogRef.current
-    const close = () => setVisible(false)
+    const close = () => {
+      switch(elem?.returnValue) {
+        case 'save': {
+          upsertMode({
+            ...incoming,
+            mode: type ?? 'Unknown',
+            start,
+          })
+          break
+        }
+        case 'cancel': {
+          break
+        }
+        case 'delete': {
+          upsertMode({ ...incoming, mode: undefined })
+          break
+        }
+      }
+
+      setVisible(false)
+    }
     elem?.addEventListener('close', close)
     return () => elem?.removeEventListener('close', close)
-  }, [setVisible])
-
-  const submit = (evt: FormEvent) => {
-    evt.preventDefault()
-    const out = Object.assign(mode, {
-      mode: type ?? 'Unknown',
-      start,
-    })
-    upsertMode(out)
-    dialogRef.current?.close()
-  }
+  }, [setVisible, incoming, type, start])
 
   return (
     <dialog
@@ -60,7 +70,7 @@ export default function ModeDialog(
     >
       <header><h1>Mode: {type}</h1></header>
       <main>
-        <form onSubmit={submit}>
+        <form method="dialog">
           <label>
             <h2>Type</h2>
             <select
@@ -98,18 +108,15 @@ export default function ModeDialog(
             </tbody>
           </table>
           <section className={styles.actions}>
-            <button 
+            <button
               className={styles.delete}
-              type="button" 
-              onClick={() =>{
-                upsertMode({ ...mode, mode: undefined })
-                dialogRef.current?.close()
-              }}
+              formNoValidate
+              value="delete"
             >
               Delete
             </button>
-            <button formMethod="dialog">Cancel</button>
-            <button autoFocus>Save</button>
+            <button formNoValidate value="cancel">Cancel</button>
+            <button autoFocus value="save">Save</button>
           </section>
         </form>
       </main>

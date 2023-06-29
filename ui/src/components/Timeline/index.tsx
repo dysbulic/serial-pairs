@@ -1,13 +1,13 @@
 "use client"
 
-import type { EventInfo, ModeInfo } from '@/types';
-import styles from './Timeline.module.css'
 import Tooltip from '@tippyjs/react'
 import { ReactElement, useContext } from 'react'
 import Markdown from 'react-markdown'
 import remarkGFM from 'remark-gfm'
+import type { EventInfo, ModeInfo } from '@/types';
 import { ConfigContext } from '@/contexts/ConfigurationContext';
-import { s2Clock } from '@/utils';
+import { s2Clock, sspan2Clock } from '@/utils';
+import styles from './index.module.css'
 
 export const Block = (
   { current, last, duration, bg, upsertMode }:
@@ -23,7 +23,7 @@ export const Block = (
     (current.start - last.start) * 100 / duration
   )
   return (
-    <Tooltip content={`${last.mode}: ${s2Clock(last.start)}–${s2Clock(current.start)}`}>
+    <Tooltip content={`${last.mode}: ${sspan2Clock(last.start, current.start)}`}>
       <span
         className={styles.block}
         style={{
@@ -42,18 +42,24 @@ const timeSort = (a: ModeInfo, b: ModeInfo) => (
 
 export default function Timeline(
   {
-    time, setTime, modeColors, eventIcons, upsertMode, upsertEvent,
+    time, setTime, upsertMode, upsertEvent,
   }:
   {
     time: number
     setTime: (time: number) => void
-    modeColors: Record<string, string>
-    eventIcons: Record<string, string>
     upsertMode: (info: ModeInfo, delay: boolean) => void
     upsertEvent: (info: EventInfo, delay: boolean) => void
   }
 ) {
-  const { modes, events, duration } = useContext(ConfigContext)
+  const {
+    modes, events, duration, modeButtons, eventButtons,
+  } = useContext(ConfigContext)
+  const modeColors = Object.fromEntries(
+    modeButtons.map(({ label, bg }) => [label, bg])
+  )
+  const eventIcons = Object.fromEntries(
+    eventButtons.map(({ label, icon }) => [label, icon])
+  )
 
   let sorted = modes.sort(timeSort)
   if(sorted.length === 0 || sorted[0].start !== 0) {
@@ -71,7 +77,6 @@ export default function Timeline(
   }
 
   sorted = modes.sort(timeSort)
-  console.debug({sorted})
 
   const spans: Array<ReactElement> = []
   sorted.forEach((current, idx) => {

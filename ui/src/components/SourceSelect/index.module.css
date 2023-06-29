@@ -1,0 +1,54 @@
+#fileselect {
+    display: grid;
+    place-items: center;
+    height: calc(100dvh - 1rem);
+  
+    & form {
+      width: min(100%, 60rem);
+
+      & label:nth-of-type(1) {
+        width: 4rem;
+
+        & input[type="radio"] {
+          width: 2rem;
+          aspect-ratio: 1;
+          border-radius: 50%;
+          border: 2px solid green;
+
+          &:checked {
+            accent-color: pink;
+          }
+        }
+      }
+    }
+  
+    & fieldset, & label:nth-of-type(2) {
+      display: flex;
+      flex-grow: 1;
+      align-items: center;
+    }
+
+    & fieldset:has(input[type="radio"]:checked) {
+      background-color: #FF69B455;
+      backdrop-filter: opacity(50%);
+    }
+
+    & label input {
+      flex-grow: 1;
+    }
+  
+    & span {
+      margin-inline-end: 0.5rem;
+    }
+  
+    & img {
+      max-height: 50vh;
+    }
+  
+    & div {
+      display: grid;
+      place-items: center;
+      margin-block: 0.5rem;
+    }
+  }
+  

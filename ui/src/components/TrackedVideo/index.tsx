@@ -2,8 +2,8 @@
 
 import { ForwardedRef, MutableRefObject, forwardRef, useContext, useEffect } from 'react'
 import { httpLink } from '@/utils'
-import styles from './TrackedVideo.module.css'
 import { ConfigContext } from '@/contexts/ConfigurationContext'
+import styles from './index.module.css'
 
 export const TrackedVideo = forwardRef(
   (

@@ -4,6 +4,7 @@ export type ButtonInfo = {
   bg: string
   icon: string
   label: string
+  href?: string
 }
 
 export type ModeInfo = {
@@ -45,4 +46,6 @@ export type ConfigContextProps = {
   setEvents: (es: (prev: Array<EventInfo>) => Array<EventInfo>) => void
   duration?: number
   setDuration: (dur: number) => void
+  getConfig: () => Metadata
+  setConfig: (cfg: Metadata) => void
 }

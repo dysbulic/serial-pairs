@@ -1,0 +1,221 @@
+{
+  video: "ipfs://bafybeidasi57n6e7upb3txkm6q5ffgoxhbfevx3ny6nlf5ua63xxfillkm/2023%E2%81%8405%E2%81%8423%4019%3A35%3A29%E1%B4%87%E1%B4%9B.Pairing%20With%20%40Duke%20On%20Where's%20Waldo%3F.%E2%80%9203%3A35%3A15.x264.mp4",
+  buttons: {
+    mode: [
+      {
+        bg: '#016A18',
+        icon: '🖊',
+        label: 'New Work',
+      },
+      {
+        bg: '#6A0E01',
+        icon: '🐞',
+        label: 'Debugging',
+      },
+      {
+        bg: '#0D1B98',
+        icon: '🥽',
+        label: 'Testing',
+      },
+      {
+        bg: '#A59506',
+        icon: '🗺',
+        label: 'Planning',
+      },
+      {
+        bg: '#06A5A5',
+        icon: '💬',
+        label: 'Chatter',
+      },
+      {
+        bg: '#690E6B',
+        icon: '🏖',
+        label: 'Break',
+      },
+      {
+        bg: '#C27800',
+        icon: '❓',
+        label: 'Unknown',
+      },
+    ],
+    event: [
+      {
+        bg: '#24EEBE',
+        icon: '/error.svg',
+        label: 'Standards Error',
+      },
+      {
+        bg: '#BEEE24',
+        icon: '/dead day.svg',
+        label: 'Useless Event',
+      },
+      {
+        bg: '#EE24BA',
+        icon: '/Spartan.svg',
+        label: 'Right Headed',
+      },
+      {
+        bg: '#8399E6',
+        icon: '/stop buffalo.svg',
+        label: 'Wrong Headed',
+      },
+      {
+        bg: '#EE410B',
+        icon: '/solutions.svg',
+        label: 'Solution Found',
+      },
+    ],
+  },
+  modes: [
+    {
+      mode: 'Unknown',
+      start: 0,
+    },
+    {
+      mode: 'Chatter',
+      start: 0,
+      id: '520a4cb6-fe3d-4b36-8a8a-9d57131f878e',
+    },
+    {
+      mode: 'New Work',
+      start: 491,
+      id: '790fce04-7c60-43d3-908a-620f7f10ffad',
+    },
+    {
+      mode: 'Debugging',
+      start: 1236,
+      id: 'c467988b-6172-4d1b-ae08-6398df506371',
+    },
+    {
+      mode: 'Testing',
+      start: 2472,
+      id: '3e575a55-dc68-4c61-a194-b8915cd965a7',
+    },
+    {
+      mode: 'Debugging',
+      start: 3336,
+      id: '7845d264-44b6-41b2-8837-daa7d96befd1',
+    },
+    {
+      mode: 'Break',
+      start: 3930,
+      id: '363379db-404d-4067-a43e-519acae931e2',
+    },
+    {
+      mode: 'Planning',
+      start: 4500,
+      id: 'c4d957a9-372d-488f-804a-00eb03429a78',
+    },
+    {
+      mode: 'New Work',
+      start: 5626,
+      id: '27475ee0-6aca-4149-898d-f5857a53e22d',
+    },
+    {
+      mode: 'Chatter',
+      start: 6370,
+      id: 'fffbde15-51f3-47d9-89ba-ae89e83dd55c',
+    },
+    {
+      mode: 'Testing',
+      start: 6980,
+      id: '010b551b-302c-4de0-bc7a-b41b22395dab',
+    },
+    {
+      mode: 'Debugging',
+      start: 8042,
+      id: '6b4dd949-2443-4984-af9a-4aff432f0269',
+    },
+    {
+      mode: 'Break',
+      start: 9397,
+      id: '56db9832-e39e-46e7-bfab-06a05cfca0dd',
+    },
+    {
+      mode: 'Debugging',
+      start: 9888,
+      id: 'fccbcd8e-34a0-4cb2-9039-642c4acecf04',
+    },
+    {
+      mode: 'New Work',
+      start: 10815,
+      id: 'a22eb45a-7b60-446d-8df3-ce56d88fc2cf',
+    },
+    {
+      mode: 'Debugging',
+      start: 11473,
+      id: 'b0d2b77f-4e91-4c69-99a1-a759f856fb7a',
+    },
+    {
+      mode: 'Planning',
+      start: 12289,
+      id: 'eb5fd7c6-65f9-427b-a85f-4f5a15da1c7e',
+    },
+    {
+      mode: 'Unknown',
+      start: 12915.045,
+    },
+  ],
+  events: [
+    {
+      event: 'Standards Error',
+      at: 586,
+      id: 'ad626dda-c48f-45dc-9318-baf90e0877a3',
+    },
+    {
+      event: 'Wrong Headed',
+      at: 1704,
+      id: '99e2831e-10dd-4003-bab4-44092c63ce11',
+    },
+    {
+      event: 'Wrong Headed',
+      at: 2219,
+      id: '9774d59f-1774-4d5c-9cf5-fbd2dd74c613',
+    },
+    {
+      event: 'Standards Error',
+      at: 3391,
+      id: '743a1db8-e444-4a80-99a9-cb4df4044e2e',
+    },
+    {
+      event: 'Right Headed',
+      at: 4493,
+      id: 'adf23fbf-cb22-45ae-ab68-70603c165c30',
+    },
+    {
+      event: 'Solution Found',
+      at: 5491,
+      id: '61633935-c23c-4289-81fd-1eeb9c329cd5',
+    },
+    {
+      event: 'Right Headed',
+      at: 7091,
+      id: '5c7df2dc-ebc1-428c-8285-a837e44b28cc',
+    },
+    {
+      event: 'Standards Error',
+      at: 8296,
+      id: 'bc204c90-5e96-4240-b441-302963bff458',
+    },
+    {
+      event: 'Solution Found',
+      at: 9389,
+      id: '8698de33-8d92-4387-b632-29c4043f6903',
+    },
+    {
+      event: 'Useless Event',
+      at: 10800,
+      id: '9721f1be-9e1a-4713-9b8f-e1f21559c658',
+    },
+    {
+      event: 'Wrong Headed',
+      at: 11869,
+      id: 'd121e9ce-f193-469a-9827-eb9c11c15e25',
+    },
+    {
+      event: 'Solution Found',
+      at: 12020,
+      id: '8e0dc3fa-19b9-4f7d-93f4-1d3e881835d4',
+    },
+  ],
+}

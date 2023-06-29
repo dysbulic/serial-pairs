@@ -22,7 +22,6 @@ import { EventInfo, ModeInfo } from '@/types'
 export default function Home() {
   const [modeOpen, setModeOpen] = useState(false)
   const [eventOpen, setEventOpen] = useState(false)
-  const [showStatistics, setShowStatistics] = useState(false)
   const [time, setTime] = useState(0)
   const [activeMode, setActiveMode] = useState<ModeInfo>()
   const [activeEvent, setActiveEvent] = useState<EventInfo>()
@@ -34,7 +33,6 @@ export default function Home() {
   // )
   const {
     modeButtons, eventButtons, actionButtons,
-    modes, events,
     videoSource, setModes, setEvents,
   } = useContext(ConfigContext)
   // const { connector: activeConnector, isConnected } = useAccount()
@@ -45,10 +43,6 @@ export default function Home() {
     return <SourceSelect/>
   }
 
-  if(showStatistics) {
-    return <Statistics setVisible={setShowStatistics}/> 
-  }
-
   const modeChanged = ({ label }: { label: string }) => {
     setActiveMode({ mode: label, start: time })
     setModeOpen(true)
@@ -56,28 +50,6 @@ export default function Home() {
   const eventSelected = ({ label }: { label: string }) => {
     setActiveEvent({ event: label, at: time })
     setEventOpen(true)
-  }
-  const actionSelected = async ({ label }: { label: string }) => {
-    const config = {
-      video: videoSource,
-      buttons: {
-        mode: modeButtons,
-        event: eventButtons,
-      },
-      modes,
-      events,
-    }
-    if(label === 'Download Config') {
-      downloadString({
-        text: JSON5.stringify(config, null, 2),
-        mimetype: 'text/javascript',
-        filename: `video_config.${new Date().toISOString()}.json5`,
-      })
-    } else if(label === 'Statistics') {
-      setShowStatistics(true)
-    } else {
-      throw new Error(`Unknown Action: "${label}".`)
-    }
   }
 
   /* Method for inserting objects into the modes and events lists.
@@ -144,7 +116,6 @@ export default function Home() {
             label="Action"
             icon="/actions.svg"
             buttons={actionButtons}
-            onSelect={actionSelected}
             elemStyle={{ '--fg': 'black' } as React.CSSProperties}
           />
         </aside>
@@ -162,7 +133,6 @@ export default function Home() {
             open={eventOpen}
             setVisible={setEventOpen}
             {...{ upsertEvent }}
-            types={eventButtons.map(({ label }) => label)}
             event={activeEvent}
           />
         )}
@@ -174,12 +144,6 @@ export default function Home() {
             setTime(t)
             if(video.current) video.current.currentTime = t
           }}
-          modeColors={Object.fromEntries(
-            modeButtons.map(({ label, bg }) => [label, bg])
-          )}
-          eventIcons={Object.fromEntries(
-            eventButtons.map(({ label, icon }) => [label, icon])
-          )}
         />
       </section>
     </main>

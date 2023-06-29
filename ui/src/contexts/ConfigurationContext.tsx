@@ -1,4 +1,4 @@
-import { ConfigContextProps, EventInfo, ModeInfo } from "@/types";
+import { ButtonInfo, ConfigContextProps, EventInfo, Metadata, ModeInfo } from "@/types";
 import React, { createContext, useState } from "react";
 
 export const defaultButtons = {
@@ -19,38 +19,63 @@ export const defaultButtons = {
     { bg: '#EE410B', icon: '/solutions.svg', label: 'Solution Found' },
   ],
   action: [
-    { bg: '#FFA8A8', icon: '/download.svg', label: 'Download Config' },
-    { bg: '#FFD5A8', icon: '/ceramic.svg', label: 'Save To Ceramic' },
-    { bg: '#FFA8A8', icon: '📈', label: 'Statistics' },
+    { bg: '#FFA8A8', icon: '/download.svg', label: 'View Config', href: '/config' },
+    { bg: '#FFA8A8', icon: '📈', label: 'Statistics', href: '/stats' },
   ],
 }
 
+const unimplemented = () => { throw new Error("Not implemented.") }
 export const ConfigContext = createContext<ConfigContextProps>({
   modeButtons: defaultButtons.mode,
-  setModeButtons: () => { throw new Error("Not implemented.") },
+  setModeButtons: unimplemented,
   eventButtons: defaultButtons.event,
-  setEventButtons: () => { throw new Error("Not implemented.") },
+  setEventButtons: unimplemented,
   actionButtons: defaultButtons.action,
-  setActionButtons: () => { throw new Error("Not implemented.") },
+  setActionButtons: unimplemented,
   videoSource: undefined,
-  setVideoSource: () => { throw new Error("Not implemented.") },
+  setVideoSource: unimplemented,
   modes: [],
-  setModes: () => { throw new Error("Not implemented.") },
+  setModes: unimplemented,
   events: [],
-  setEvents: () => { throw new Error("Not implemented.") },
+  setEvents: unimplemented,
   duration: undefined,
-  setDuration: () => { throw new Error("Not implemented.") },
+  setDuration: unimplemented,
+  getConfig: unimplemented,
+  setConfig: unimplemented,
 })
 
 export const ConfigProvider: React.FC<React.PropsWithChildren> = (
   ({ children }) => {
     const [modeButtons, setModeButtons] = useState(defaultButtons.mode)
     const [eventButtons, setEventButtons] = useState(defaultButtons.event)
-    const [actionButtons, setActionButtons] = useState(defaultButtons.action)
+    const [actionButtons, setActionButtons] = (
+      useState<Array<ButtonInfo>>(defaultButtons.action)
+    )
     const [videoSource, setVideoSource] = useState<string>()
     const [modes, setModes] = useState<Array<ModeInfo>>([])
     const [events, setEvents] = useState<Array<EventInfo>>([])
     const [duration, setDuration] = useState(0)
+
+    const setConfig = (config: Metadata) => {
+      const { video: videoSource, buttons, modes, events } = config
+      if(videoSource) setVideoSource(videoSource)
+      if(buttons?.mode) setModeButtons(buttons.mode)
+      if(buttons?.event) setEventButtons(buttons.event)
+      if(buttons?.action) setActionButtons(buttons.action)
+      if(modes) setModes(modes)
+      if(events) setEvents(events)
+
+    }
+
+    const getConfig = () => ({
+      video: videoSource,
+      buttons: {
+        mode: modeButtons,
+        event: eventButtons,
+      },
+      modes,
+      events,
+    })
 
     return (
       <ConfigContext.Provider value={{
@@ -61,6 +86,7 @@ export const ConfigProvider: React.FC<React.PropsWithChildren> = (
         modes, setModes,
         events, setEvents,
         duration, setDuration,
+        getConfig, setConfig,
       }}>
         {children}
       </ConfigContext.Provider>

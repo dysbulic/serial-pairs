@@ -9,13 +9,11 @@ import { Icon } from './FoldingMenu'
 export default function EventDialog(
   {
     open = false,
-    types,
     event: incoming,
     setVisible,
     upsertEvent
   }: {
     open?: boolean
-    types: string[]
     event: EventInfo
     setVisible: (open: boolean) => void
     upsertEvent: (args: EventInfo) => void
@@ -27,6 +25,7 @@ export default function EventDialog(
   const dialogRef = useRef<HTMLDialogElement>(null)
   const { eventButtons } = useContext(ConfigContext)
   const { icon } = eventButtons.find((b) => b.label === type) ?? {}
+  const types = eventButtons.map(({ label }) => label)
 
   useEffect(() => {
     if(open) {
@@ -40,21 +39,33 @@ export default function EventDialog(
 
   useEffect(() => {
     const elem = dialogRef.current
-    const close = () => setVisible(false)
+    const close = () => {
+      switch(elem?.returnValue) {
+        case 'save': {
+          const evt = {
+            ...incoming,
+            event: type ?? 'Unknown',
+            at: start,
+          }
+          if(!!explanation) {
+            Object.assign(evt, { explanation })
+          }
+          upsertEvent(evt)
+          break
+        }
+        case 'cancel': {
+          break
+        }
+        case 'delete': {
+          upsertEvent({ ...incoming, event: undefined })
+          break
+        }
+      }
+      setVisible(false)
+    }
     elem?.addEventListener('close', close)
     return () => elem?.removeEventListener('close', close)
-  }, [setVisible])
-
-  const submit = (evt: FormEvent) => {
-    evt.preventDefault()
-    console.info({ 'SUBMITTED': dialogRef.current?.returnValue })
-    upsertEvent({
-      event: type ?? 'Unknown',
-      at: start,
-      explanation,
-    })
-    dialogRef.current?.close()
-  }
+  }, [setVisible, incoming, type, start])
 
   return (
     <dialog
@@ -67,7 +78,7 @@ export default function EventDialog(
         <h1>Event: {type}</h1>
       </header>
       <main>
-        <form onSubmit={submit}>
+        <form method="dialog">
           <label>
             <h2>Type</h2>
             <select
@@ -98,18 +109,19 @@ export default function EventDialog(
             />
           </label>
           <section className={styles.actions}>
-          <button 
+            <button 
               className={styles.delete}
-              type="button" 
-              onClick={() =>{
-                upsertEvent({ ...incoming, event: undefined })
-                dialogRef.current?.close()
-              }}
+              formNoValidate
+              type="submit"
+              value="delete"
             >
               Delete
             </button>
-            <button formMethod="dialog">Cancel</button>
-            <button autoFocus>Save</button>
+            <button
+              formNoValidate
+              value="cancel"
+            >Cancel</button>
+            <button autoFocus value="save">Save</button>
           </section>
         </form>
       </main>

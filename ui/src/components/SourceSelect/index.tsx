@@ -4,7 +4,7 @@ import JSON5 from 'json5'
 import { httpLink } from '@/utils'
 import { ConfigContext } from '@/contexts/ConfigurationContext'
 import { useContext } from 'react'
-import styles from './SourceSelect.module.css'
+import styles from './index.module.css'
 
 export default function SourceSelect(
   // : {
@@ -16,14 +16,7 @@ export default function SourceSelect(
   //   setEvents: (events: Array<EventInfo>) => void
   // }
 ) {
-  const {
-    setVideoSource,
-    setModeButtons,
-    setEventButtons,
-    setActionButtons,
-    setModes,
-    setEvents,
-  } = useContext(ConfigContext)
+  const { setVideoSource, setConfig } = useContext(ConfigContext)
 
   return (
     <main id={styles.fileselect}>
@@ -63,27 +56,13 @@ export default function SourceSelect(
               break
             }
           }
-          if (metadata) {
-            const { video: videoSource, buttons, modes, events } = metadata
-            if(videoSource) setVideoSource(videoSource)
-            if(buttons?.mode) setModeButtons(buttons.mode)
-            if(buttons?.event) setEventButtons(buttons.event)
-            if(buttons?.action) setActionButtons(buttons.action)
-            if(modes) setModes(modes)
-            if(events) setEvents(events)
-          }
+          if(metadata) setConfig(metadata)
         }}
       >
         <fieldset>
-          <input type="radio" name="source" value="ceramic" />
           <label>
-            <span>Enter a Ceramic Stream ID:</span>
-            <input id="ceramic" />
+            <input type="radio" name="source" value="file" />
           </label>
-        </fieldset>
-        <div>or</div>
-        <fieldset>
-          <input type="radio" name="source" value="file" />
           <label>
             <span>Enter a metadata file:</span>
             <input id="metafile" type="file" />
@@ -91,7 +70,9 @@ export default function SourceSelect(
         </fieldset>
         <div>or</div>
         <fieldset>
-          <input type="radio" name="source" value="url" defaultChecked />
+          <label>
+            <input type="radio" name="source" value="url" defaultChecked />
+          </label>
           <label>
             <span>Enter a metadata URL:</span>
             <input id="metaurl" defaultValue="ipfs://bafybeihavkdijdwgzivpr6ieieggv4tphjqkciok4xsd6pul7nvvno375q/video_config.2023-06-28T06_46_34.405Z.json5" />
@@ -99,13 +80,15 @@ export default function SourceSelect(
         </fieldset>
         <div>or</div>
         <fieldset>
-          <input type="radio" name="source" value="video" />
+          <label>
+            <input type="radio" name="source" value="video" />
+          </label>
           <label>
             <span>Enter a video URL:</span>
             <input id="video" />
           </label>
         </fieldset>
-        <div><button>Load</button></div>
+        <div><button autoFocus>Load</button></div>
       </form>
     </main>
   )
