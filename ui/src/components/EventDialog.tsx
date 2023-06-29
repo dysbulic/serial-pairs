@@ -1,22 +1,22 @@
 "use client"
 
-import React, { FormEvent, useContext, useEffect, useRef, useState } from 'react'
-import styles from './ModeDialog.module.css'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { EventInfo } from '@/types'
 import { ConfigContext } from '@/contexts/ConfigurationContext'
 import { Icon } from './FoldingMenu'
+import styles from './Dialog.module.css'
 
 export default function EventDialog(
   {
     open = false,
     event: incoming,
     setVisible,
-    upsertEvent
+    upsert,
   }: {
     open?: boolean
     event: EventInfo
     setVisible: (open: boolean) => void
-    upsertEvent: (args: EventInfo) => void
+    upsert: (args: EventInfo) => void
   }
 ) {
   const [type, setType] = useState(incoming.event)
@@ -31,6 +31,7 @@ export default function EventDialog(
     if(open) {
       setType(incoming.event)
       setStart(incoming.at)
+      setExplanation(incoming.explanation ?? '')
       if(!dialogRef.current?.open) {
         dialogRef.current?.showModal()
       }
@@ -50,14 +51,14 @@ export default function EventDialog(
           if(!!explanation) {
             Object.assign(evt, { explanation })
           }
-          upsertEvent(evt)
+          upsert(evt)
           break
         }
         case 'cancel': {
           break
         }
         case 'delete': {
-          upsertEvent({ ...incoming, event: undefined })
+          upsert({ ...incoming, event: undefined })
           break
         }
       }
@@ -65,7 +66,7 @@ export default function EventDialog(
     }
     elem?.addEventListener('close', close)
     return () => elem?.removeEventListener('close', close)
-  }, [setVisible, incoming, type, start])
+  }, [setVisible, incoming, type, start, explanation])
 
   return (
     <dialog

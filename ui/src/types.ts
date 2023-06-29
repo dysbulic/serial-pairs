@@ -7,10 +7,18 @@ export type ButtonInfo = {
   href?: string
 }
 
+export type TrackedRightness = (
+  'on-topic correct'
+  | 'on-topic incorrect'
+  | 'off-topic correct'
+  | 'off-topic incorrect'
+)
+
 export type ModeInfo = {
   id?: string
   mode?: string
   start: number
+  orientation?: TrackedRightness
 }
 
 export type EventInfo = {
@@ -45,7 +53,8 @@ export type ConfigContextProps = {
   events: Array<EventInfo>
   setEvents: (es: (prev: Array<EventInfo>) => Array<EventInfo>) => void
   duration?: number
-  setDuration: (dur: number) => void
+  setDuration: (dur?: number) => void
   getConfig: () => Metadata
   setConfig: (cfg: Metadata) => void
+  resetConfig: () => void
 }

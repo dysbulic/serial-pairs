@@ -1,6 +1,7 @@
 "use client"
 
 import { CID } from 'multiformats/cid'
+import JSON5 from 'json5'
 import type { Metadata, ModeInfo } from '@/types'
 
 type Maybe<T> = T | null
@@ -55,19 +56,34 @@ export const downloadString = (
   document.body.appendChild(a)
   a.click()
   document.body.removeChild(a)
+
   setTimeout(() => { URL.revokeObjectURL(a.href) }, 1500)
 }
 
 export const s2Clock = (seconds: number) => (
   new Date(seconds * 1000)
-  .toTimeString()
-  .split(' ')[0]
-  .replace(/^[0:]+/g, '')
-  || '0'
+  .toISOString()
+  .replace(/^.+T([\d:]+).*$/, '$1')
+  .replace(/^[0:]+(.*\d:\d\d)/, '$1'))
+
+export const sspan2Clock = (start: number, end: number) => (
+  `${s2Clock(start)}+${s2Clock(end - start)}`
 )
 
-export const sspan2Clock = (start: number, end: number) => {
+export const readText = (input: File) => {
+  const reader = new FileReader()
+  return new Promise<string>((resolve) => {
+    reader.onload = (evt) => {
+      const { result } = evt.target as FileReader
+      resolve(result as string)
+    }
+    reader.readAsText(input)
+  })
+}
 
+export const readJSON5 = async (input: File) => {
+  const text = await readText(input)
+  return JSON5.parse(text)
 }
 
 export const configToGraphQL = (config: Metadata) => (`

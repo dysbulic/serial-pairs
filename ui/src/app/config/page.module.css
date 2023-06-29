@@ -12,12 +12,20 @@
     width: 100%;
     padding: 0;
 
+    & label {
+      display: flex;
+    }
+
     & > button {
       flex-grow: 1;
     }
   }
 
-  & form {
+  & #file {
+    display: none;
+  }
+
+  & > form:nth-of-type(2) {
     display: flex;
     flex-direction: column;
     flex-grow: 1;

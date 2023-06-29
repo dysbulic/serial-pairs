@@ -1,5 +1,5 @@
 import { ButtonInfo, ConfigContextProps, EventInfo, Metadata, ModeInfo } from "@/types";
-import React, { createContext, useState } from "react";
+import React, { Dispatch, PropsWithChildren, SetStateAction, createContext, useState } from "react";
 
 export const defaultButtons = {
   mode: [
@@ -42,40 +42,67 @@ export const ConfigContext = createContext<ConfigContextProps>({
   setDuration: unimplemented,
   getConfig: unimplemented,
   setConfig: unimplemented,
+  resetConfig: unimplemented,
 })
 
-export const ConfigProvider: React.FC<React.PropsWithChildren> = (
+export const ConfigProvider: React.FC<PropsWithChildren> = (
   ({ children }) => {
-    const [modeButtons, setModeButtons] = useState(defaultButtons.mode)
-    const [eventButtons, setEventButtons] = useState(defaultButtons.event)
+    const [modeButtons, setModeButtons] = (
+      useState<Array<ButtonInfo>>(defaultButtons.mode)
+    )
+    const [eventButtons, setEventButtons] = (
+      useState<Array<ButtonInfo>>(defaultButtons.event)
+    )
     const [actionButtons, setActionButtons] = (
       useState<Array<ButtonInfo>>(defaultButtons.action)
     )
+    const buttons = {
+      mode: modeButtons,
+      event: eventButtons,
+      action: actionButtons,
+    }
+    const setButtons: (
+      Record<string, Dispatch<SetStateAction<Array<ButtonInfo>>>>
+    ) = {
+      mode: setModeButtons,
+      event: setEventButtons,
+      action: setActionButtons,
+    }
     const [videoSource, setVideoSource] = useState<string>()
     const [modes, setModes] = useState<Array<ModeInfo>>([])
     const [events, setEvents] = useState<Array<EventInfo>>([])
-    const [duration, setDuration] = useState(0)
+    const [duration, setDuration] = useState<number>()
 
     const setConfig = (config: Metadata) => {
       const { video: videoSource, buttons, modes, events } = config
       if(videoSource) setVideoSource(videoSource)
-      if(buttons?.mode) setModeButtons(buttons.mode)
-      if(buttons?.event) setEventButtons(buttons.event)
-      if(buttons?.action) setActionButtons(buttons.action)
+      Object.entries(buttons).forEach(
+        ([type, list]: [string, Array<ButtonInfo>]) => {
+          if(type in setButtons) {
+            setButtons[type](list)
+          } else {
+            console.error(`Unknown buttons list "${type} in config.`)
+          }
+        }
+      )
       if(modes) setModes(modes)
       if(events) setEvents(events)
-
     }
 
     const getConfig = () => ({
       video: videoSource,
-      buttons: {
-        mode: modeButtons,
-        event: eventButtons,
-      },
+      buttons,
       modes,
       events,
     })
+
+    const resetConfig = () => {
+      Object.values(setButtons).forEach((setter) => setter([]))
+      setVideoSource(undefined)
+      setModes([])
+      setEvents([])
+      setDuration(undefined)
+    }
 
     return (
       <ConfigContext.Provider value={{
@@ -86,7 +113,7 @@ export const ConfigProvider: React.FC<React.PropsWithChildren> = (
         modes, setModes,
         events, setEvents,
         duration, setDuration,
-        getConfig, setConfig,
+        getConfig, setConfig, resetConfig,
       }}>
         {children}
       </ConfigContext.Provider>

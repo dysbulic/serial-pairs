@@ -1,10 +1,10 @@
 "use client"
 
 import JSON5 from 'json5'
-import React, { FormEvent, useContext, useState } from "react"
+import React, { FormEvent, useContext, useRef, useState } from "react"
 import { ConfigContext } from "@/contexts/ConfigurationContext"
 import styles from './page.module.css'
-import { downloadString } from '@/utils'
+import { downloadString, readJSON5, readText } from '@/utils'
 import Link from 'next/link'
 
 export default function Configuration() {
@@ -12,15 +12,14 @@ export default function Configuration() {
   const [json, setJSON] = (
     useState(JSON5.stringify(getConfig(), null, 2))
   )
+  const files = useRef<HTMLInputElement>(null)
 
-  const submit = (evt: React.FormEvent) => {
+  const submit = (evt: FormEvent) => {
     evt.preventDefault()
-    const origEvent = evt.nativeEvent as SubmitEvent
-    switch((origEvent.submitter as HTMLButtonElement)?.value) {
+    const srcEvent = (evt.nativeEvent ?? evt) as SubmitEvent
+    switch((srcEvent.submitter as HTMLButtonElement)?.value) {
       case 'save': {
-        const config = JSON5.parse(json)
-        console.info({ config })
-        setConfig(config)
+        setConfig(JSON5.parse(json))
         break
       }
       case 'reset': {
@@ -30,14 +29,26 @@ export default function Configuration() {
     }
   }
 
+  const load = async (evt: FormEvent) => {
+    console.debug('load')
+    evt.preventDefault()
+    const form = evt.target as HTMLFormElement
+    const { files } = form['source'] as HTMLInputElement
+    const [file] = Array.from(files ?? [])
+    console.debug(`Loading from ${file.name}.`)
+    setJSON(await readText(file as File))
+  }
+
   return (
     <main id={styles.config}>
       <menu>
         <Link href="/">⤆</Link>
         <button form="text" value="save">Save</button>
         <button form="text" value="reset">Reset</button>
+        <button type="button" onClick={() => files.current?.click()}>
+          Load
+        </button>
         <button
-          id={styles.download}
           type="button"
           onClick={() => {
             downloadString({
@@ -48,6 +59,14 @@ export default function Configuration() {
           }}
         >Download</button>
       </menu>
+      <form id={styles.file} onSubmit={load} className={styles.form}>
+        <input
+          id="source"
+          ref={files}
+          type="file"
+          onChange={({ target }) => { target.form?.requestSubmit() }}
+        />
+      </form>
       <form id="text" onSubmit={submit} className={styles.form}>
         <textarea
           id={styles.json}

@@ -1,25 +1,28 @@
 "use client"
 
-import React, { FormEvent, useContext, useEffect, useRef, useState } from 'react'
-import styles from './ModeDialog.module.css'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { ModeInfo } from '@/types'
 import { ConfigContext } from '@/contexts/ConfigurationContext'
+import styles from './Dialog.module.css'
 
 export default function ModeDialog(
   {
     open = false,
     mode: incoming,
     setVisible,
-    upsertMode,
+    upsert,
   }: {
     open?: boolean
     mode: ModeInfo
     setVisible: (open: boolean) => void
-    upsertMode: (args: ModeInfo) => void
+    upsert: (args: ModeInfo) => void
   }
 ) {
   const [type, setType] = useState(incoming.mode)
   const [start, setStart] = useState(incoming.start)
+  const [orientation, setOrientation] = (
+    useState(incoming.orientation)
+  )
   const dialogRef = useRef<HTMLDialogElement>(null)
   const { modeButtons } = useContext(ConfigContext)
   const types = modeButtons.map(({ label }) => label)
@@ -35,32 +38,43 @@ export default function ModeDialog(
     }
   }, [open, incoming])
 
+  const submit = () => {
+    const elem = dialogRef.current
+    switch(elem?.returnValue) {
+      case 'save': {
+        const out = {
+          id: incoming.id,
+          mode: type,
+          start,
+        }
+        if(!!orientation) {
+          Object.assign(out, { orientation })
+        }
+        if(out.mode && out.start != null) {
+          upsert(out)
+        }
+        break
+      }
+      case 'cancel': {
+        break
+      }
+      case 'delete': {
+        upsert({ ...incoming, mode: undefined })
+        break
+      }
+    }
+
+  }
+
   useEffect(() => {
     const elem = dialogRef.current
     const close = () => {
-      switch(elem?.returnValue) {
-        case 'save': {
-          upsertMode({
-            ...incoming,
-            mode: type ?? 'Unknown',
-            start,
-          })
-          break
-        }
-        case 'cancel': {
-          break
-        }
-        case 'delete': {
-          upsertMode({ ...incoming, mode: undefined })
-          break
-        }
-      }
-
+      submit()
       setVisible(false)
     }
     elem?.addEventListener('close', close)
     return () => elem?.removeEventListener('close', close)
-  }, [setVisible, incoming, type, start])
+  }, [setVisible, incoming, type, start, orientation])
 
   return (
     <dialog
@@ -92,29 +106,42 @@ export default function ModeDialog(
               onChange={({ target: { value }}) => setStart(Number(value))}
             />
           </label>
-          <table id={styles.tracking}>
-            <tbody>
-              <tr><th/><th>On Track</th><th>Off Track</th></tr>
-              <tr>
-                <th>Correct</th>
-                <td><input type="radio" name="track"/></td>
-                <td><input type="radio" name="track"/></td>
-              </tr>
-              <tr>
-                <th>Incorrect</th>
-                <td><input type="radio" name="track"/></td>
-                <td><input type="radio" name="track"/></td>
-              </tr>
-            </tbody>
-          </table>
+          <section id={styles.tracking}>
+            {(['On Track', 'Off Track'] as const).map((track) => {
+              return (
+                <>
+                  <h2 id={styles[`${track.at(1)?.toLowerCase()}-track`]}>{track}</h2>
+                  {['Correct', 'Incorrect'].map((right, rightIdx) => {
+                    const id = `${right.at(0)}${track.at(1)}`.toLowerCase()
+                    const value = `${track.toLowerCase()} ${right.toLowerCase()}`
+                    return (
+                      <>
+                        {rightIdx === 0 && (
+                          <h2 id={styles[`${id}-right`]}>{right}</h2>
+                        )}
+                        <input
+                          type="radio"
+                          name="track"
+                          {...{ value }}
+                          checked={orientation === value}
+                        />
+                      </>
+                    )
+                  })}
+                </>
+              )
+            })}
+          </section>
           <section className={styles.actions}>
-            <button
-              className={styles.delete}
-              formNoValidate
-              value="delete"
-            >
-              Delete
-            </button>
+            {!!incoming.id && (
+              <button
+                className={styles.delete}
+                formNoValidate
+                value="delete"
+              >
+                Delete
+              </button>
+            )}
             <button formNoValidate value="cancel">Cancel</button>
             <button autoFocus value="save">Save</button>
           </section>

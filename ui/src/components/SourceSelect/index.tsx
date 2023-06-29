@@ -1,7 +1,7 @@
 "use client"
 
 import JSON5 from 'json5'
-import { httpLink } from '@/utils'
+import { httpLink, readJSON5 } from '@/utils'
 import { ConfigContext } from '@/contexts/ConfigurationContext'
 import { useContext } from 'react'
 import styles from './index.module.css'
@@ -32,14 +32,7 @@ export default function SourceSelect(
             case 'file': {
               const { files } = form.querySelector('#metafile') as HTMLInputElement
               const [input] = Array.from(files ?? [])
-              const reader = new FileReader()
-              metadata = await new Promise((resolve) => {
-                reader.onload = (evt) => {
-                  const { result } = evt.target as FileReader
-                  resolve(JSON5.parse(result as string))
-                }
-                reader.readAsText(input)
-              })
+              metadata = await readJSON5(input)
               break
             }
             case 'url': {

@@ -1,14 +1,11 @@
 "use client"
 
 import { useContext, useRef, useState } from 'react'
-import JSON5 from 'json5'
 import FoldingMenu from '@/components/FoldingMenu'
 import TrackedVideo from '@/components/TrackedVideo'
-import { downloadString } from '@/utils'
 import ModeDialog from '@/components/ModeDialog'
 import Timeline from '@/components/Timeline'
 import EventDialog from '@/components/EventDialog'
-import Statistics from '@/components/Statistics'
 import SourceSelect from '@/components/SourceSelect'
 import styles from './page.module.css'
 import { ConfigContext, ConfigProvider } from '@/contexts/ConfigurationContext'
@@ -73,7 +70,6 @@ export default function Home() {
         info.id ??= crypto.randomUUID()
         setter((prev: Array<Type>) => {
           const found = prev.findIndex((m) => m.id === info.id)
-          console.log({found, prev, info})
           if(found >= 0) {
             if(
               !(info as unknown as ModeInfo).mode
@@ -124,7 +120,7 @@ export default function Home() {
           <ModeDialog
             open={modeOpen}
             setVisible={setModeOpen}
-            {...{ upsertMode }}
+            upsert={upsertMode}
             mode={activeMode}
           />
         )}
@@ -132,7 +128,7 @@ export default function Home() {
           <EventDialog
             open={eventOpen}
             setVisible={setEventOpen}
-            {...{ upsertEvent }}
+            upsert={upsertEvent}
             event={activeEvent}
           />
         )}
