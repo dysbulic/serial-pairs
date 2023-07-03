@@ -1,0 +1,22 @@
+.buttonForm {
+  max-width: calc(4 * 20ch);
+  margin-inline: auto;
+
+  & ul {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+
+    & li {
+      display: contents;
+
+      & input {
+        width: 100%;
+      }
+    }
+  }
+
+  & button {
+    display: block;
+    margin-inline: auto;
+  }
+}

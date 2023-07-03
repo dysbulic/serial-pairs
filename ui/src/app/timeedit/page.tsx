@@ -1,27 +1,30 @@
 "use client"
 
-import { ConfigContext } from "@/contexts/ConfigurationContext";
-import Link from "next/link";
-import { FormEvent, useContext, useState } from "react";
+import Link from "next/link"
+import { FormEvent, useContext, useState } from "react"
+import { ConfigContext } from "@/contexts/ConfigurationContext"
+import { ButtonInfo } from "@/types"
+import styles from './index.module.css'
 
-const EventEdit = ({event, idx}) => {
+const EventEdit = ({ event, idx }: { event: ButtonInfo, idx: number }) => {
   const [bg, setBg] = useState(event.bg)
   const [icon, setIcon] = useState(event.icon)
   const [label, setLabel] = useState(event.label)
   const [href, setHref] = useState(event.href)
 
-return(
-  <li key={idx}>
-  <input value={bg} id="bg" onChange={({target: {value}})=>setBg(value)}/>
-  <input value={icon} id="icon" onChange={({target: {value}})=>setIcon(value)}/>
-  <input value={label} id="label" onChange={({target: {value}})=>setLabel(value)}/>
-  <input value={href} id="href" onChange={({target: {value}})=>setHref(value)}/>
-</li>
-)
+  return(
+    <li key={idx}>
+      <input value={bg} id={`bg-${idx}`} onChange={({target: {value}})=>setBg(value)} type="color"/>
+      <input value={icon} id={`icon-${idx}`} onChange={({target: {value}})=>setIcon(value)}/>
+      <input value={label} id={`label-${idx}`} onChange={({target: {value}})=>setLabel(value)}/>
+      <input value={href} id={`href-${idx}`} onChange={({target: {value}})=>setHref(value)}/>
+    </li>
+  )
 }
 export default function TimeEdit() {
-  const { eventButtons, modeButtons, setEventButtons, setModeButtons } =
-    useContext(ConfigContext);
+  const {
+    eventButtons, modeButtons, setEventButtons, setModeButtons,
+  } = useContext(ConfigContext)
 
   const submitEvents=(evt: FormEvent) => {
     evt.preventDefault()
@@ -29,9 +32,9 @@ export default function TimeEdit() {
 
     const elements = Array.from((evt.target as HTMLFormElement).elements)
     const out = []
-    for (let i = 0; i < elements.length; i += chunksize) {
+    for(let i = 0; i < elements.length; i += chunksize) {
       const chunk = elements.slice(i, i + chunksize);
-      if (chunk.length === chunksize){
+      if(chunk.length === chunksize) {
         out.push({
           bg: (chunk[0] as HTMLInputElement).value,
           icon: (chunk[1] as HTMLInputElement).value,
@@ -42,8 +45,9 @@ export default function TimeEdit() {
     }
     setEventButtons(out)
   }
+
   return (
-    <form onSubmit={submitEvents}>
+    <form onSubmit={submitEvents} className={styles.buttonForm}>
       <Link href='/'>Back</Link>
       <ul>
         <li>
@@ -57,7 +61,7 @@ export default function TimeEdit() {
           <EventEdit key={idx} {...{ event, idx }}/>
         ))}
       </ul>
-      <button>Save</button>      
+      <button>Save</button>
     </form>
   )
 }
