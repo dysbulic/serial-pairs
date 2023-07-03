@@ -36,6 +36,7 @@
   }
 
   & label ~ input:checked ~ ul li {
+    opacity: 1;
     &:nth-of-type(1) {
       left: calc(1.5 * var(--item-width))
     }

@@ -20,6 +20,7 @@ export const defaultButtons = {
   ],
   action: [
     { bg: '#FFA8A8', icon: '/download.svg', label: 'View Config', href: '/config' },
+    { bg: '#FFA8A8', icon: '📅', label: 'Edit Events', href: '/timeedit'},
     { bg: '#FFA8A8', icon: '📈', label: 'Statistics', href: '/stats' },
   ],
 }
