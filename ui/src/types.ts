@@ -1,4 +1,4 @@
-import { Mode } from "fs"
+export type Maybe<T> = T | null
 
 export type ButtonInfo = {
   bg: string
@@ -8,10 +8,10 @@ export type ButtonInfo = {
 }
 
 export type TrackedRightness = (
-  'on-topic correct'
-  | 'on-topic incorrect'
-  | 'off-topic correct'
-  | 'off-topic incorrect'
+  'on-topic-correct'
+  | 'on-topic-incorrect'
+  | 'off-topic-correct'
+  | 'off-topic-incorrect'
 )
 
 export type ModeInfo = {

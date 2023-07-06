@@ -1,9 +1,10 @@
 "use client"
 
-import React, { useContext, useEffect, useRef, useState } from 'react'
-import { ModeInfo } from '@/types'
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
+import { ModeInfo, TrackedRightness } from '@/types'
 import { ConfigContext } from '@/contexts/ConfigurationContext'
-import styles from './Dialog.module.css'
+import general from '../Dialog.module.css'
+import styles from './index.module.css'
 
 export default function ModeDialog(
   {
@@ -38,7 +39,7 @@ export default function ModeDialog(
     }
   }, [open, incoming])
 
-  const submit = () => {
+  const submit = useCallback(() => {
     const elem = dialogRef.current
     switch(elem?.returnValue) {
       case 'save': {
@@ -63,8 +64,7 @@ export default function ModeDialog(
         break
       }
     }
-
-  }
+  }, [incoming, orientation, start, type, upsert])
 
   useEffect(() => {
     const elem = dialogRef.current
@@ -74,12 +74,12 @@ export default function ModeDialog(
     }
     elem?.addEventListener('close', close)
     return () => elem?.removeEventListener('close', close)
-  }, [setVisible, incoming, type, start, orientation])
+  }, [setVisible, incoming, type, start, orientation, submit])
 
   return (
     <dialog
       ref={dialogRef}
-      className={styles.dialog}
+      className={general.dialog}
       style={{ '--bg': bg } as React.CSSProperties}
     >
       <header><h1>Mode: {type}</h1></header>
@@ -107,24 +107,30 @@ export default function ModeDialog(
             />
           </label>
           <section id={styles.tracking}>
-            {(['On Track', 'Off Track'] as const).map((track) => {
+            {(['On Track', 'Off Track'] as const).map((track, trackIdx) => {
+              const trackId = track.replace(/ /g, '-')?.toLowerCase()
               return (
                 <>
-                  <h2 id={styles[`${track.at(1)?.toLowerCase()}-track`]}>{track}</h2>
-                  {['Correct', 'Incorrect'].map((right, rightIdx) => {
-                    const id = `${right.at(0)}${track.at(1)}`.toLowerCase()
-                    const value = `${track.toLowerCase()} ${right.toLowerCase()}`
+                  <h2 id={styles[trackId]}>{track}</h2>
+                  {['Correct', 'Incorrect'].map((right) => {
+                    const rightId = right.toLowerCase()
+                    const value = `${trackId}-${rightId}`
                     return (
                       <>
-                        {rightIdx === 0 && (
-                          <h2 id={styles[`${id}-right`]}>{right}</h2>
+                        {trackIdx === 0 && (
+                          <h2 id={styles[rightId]}>{right}</h2>
                         )}
-                        <input
-                          type="radio"
-                          name="track"
-                          {...{ value }}
-                          checked={orientation === value}
-                        />
+                        <label id={styles[value]}>
+                          <input
+                            type="radio"
+                            name="track"
+                            {...{ value }}
+                            checked={orientation === value}
+                            onChange={({ target: { value }}) => {
+                              setOrientation(value as TrackedRightness)
+                            }}
+                          />
+                        </label>
                       </>
                     )
                   })}
@@ -132,10 +138,10 @@ export default function ModeDialog(
               )
             })}
           </section>
-          <section className={styles.actions}>
+          <section className={general.actions}>
             {!!incoming.id && (
               <button
-                className={styles.delete}
+                className={general.delete}
                 formNoValidate
                 value="delete"
               >

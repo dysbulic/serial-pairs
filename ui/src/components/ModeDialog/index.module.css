@@ -1,0 +1,48 @@
+#tracking {
+  display: grid;
+  grid-template-areas:
+    ".         on-track off-track"
+    "correct   nc       fc"
+    "incorrect ni       fi";
+  & > * {
+    padding: 0.5rem;
+  }
+
+  & h2 { margin: 0 }
+  & label {
+    display: grid;
+    place-items: center;
+    font-size: 3.5rem;
+  }
+  & label:hover {
+    cursor: pointer;
+    background-color: lightblue;
+  }
+
+  & #on-track { grid-area: on-track }
+  & #off-track { grid-area: off-track }
+  & #correct { grid-area: correct }
+  & #incorrect { grid-area: incorrect }
+  & #on-track-correct { grid-area: nc }
+  & #on-track-incorrect { grid-area: ni }
+  & #off-track-correct { grid-area: fc }
+  & #off-track-incorrect { grid-area: fi }
+
+  --border: 2px solid darkblue;
+
+  & #on-track,
+  & #correct,
+  & #incorrect,
+  & #on-track-correct,
+  & #on-track-incorrect {
+    border-inline-end: var(--border);
+  }
+
+  & #correct,
+  & #on-track,
+  & #off-track,
+  & #on-track-correct,
+  & #off-track-correct {
+    border-block-end: var(--border);
+  }
+}

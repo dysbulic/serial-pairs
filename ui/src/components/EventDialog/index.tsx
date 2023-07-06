@@ -3,8 +3,9 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { EventInfo } from '@/types'
 import { ConfigContext } from '@/contexts/ConfigurationContext'
-import { Icon } from './FoldingMenu'
-import styles from './Dialog.module.css'
+import { Icon } from '../FoldingMenu'
+import general from '../Dialog.module.css'
+import styles from './index.module.css'
 
 export default function EventDialog(
   {
@@ -66,12 +67,12 @@ export default function EventDialog(
     }
     elem?.addEventListener('close', close)
     return () => elem?.removeEventListener('close', close)
-  }, [setVisible, incoming, type, start, explanation])
+  }, [setVisible, incoming, type, start, explanation, upsert])
 
   return (
     <dialog
       ref={dialogRef}
-      className={styles.dialog}
+      className={general.dialog}
       style={{ '--bg': '#000000DD' } as React.CSSProperties}
     >
       <header>
@@ -109,9 +110,9 @@ export default function EventDialog(
               onChange={({ target: { value }}) => setExplanation(value)}
             />
           </label>
-          <section className={styles.actions}>
+          <section className={general.actions}>
             <button 
-              className={styles.delete}
+              className={general.delete}
               formNoValidate
               type="submit"
               value="delete"

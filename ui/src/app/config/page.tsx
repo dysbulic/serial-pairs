@@ -30,19 +30,17 @@ export default function Configuration() {
   }
 
   const load = async (evt: FormEvent) => {
-    console.debug('load')
     evt.preventDefault()
     const form = evt.target as HTMLFormElement
     const { files } = form['source'] as HTMLInputElement
     const [file] = Array.from(files ?? [])
-    console.debug(`Loading from ${file.name}.`)
     setJSON(await readText(file as File))
   }
 
   return (
     <main id={styles.config}>
       <menu>
-        <Link href="/">⤆</Link>
+        <Link href="/" title="Back To Review">⤆</Link>
         <button form="text" value="save">Save</button>
         <button form="text" value="reset">Reset</button>
         <button type="button" onClick={() => files.current?.click()}>

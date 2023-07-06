@@ -58,6 +58,12 @@
     &:nth-of-type(7) {
       left: calc(7.5 * var(--item-width))
     }
+    &:nth-of-type(8) {
+      left: calc(8.5 * var(--item-width))
+    }
+    &:nth-of-type(9) {
+      left: calc(9.5 * var(--item-width))
+    }
   }
 }
 
