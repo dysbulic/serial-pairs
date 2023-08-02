@@ -16,7 +16,7 @@ export const Block = (
     last: ModeInfo
     duration: number
     bg: string
-    upsertMode: (info: ModeInfo, delay: boolean) => void
+    upsertMode?: (info: ModeInfo, delay: boolean) => void
   }
 ) => {
   const size = (
@@ -30,7 +30,7 @@ export const Block = (
           '--size': `${size}%`,
           '--bg': bg,
         } as React.CSSProperties}
-        onClick={() => upsertMode(last, true)}
+        onClick={() => upsertMode?.(last, true)}
       />
     </Tooltip>
   )
@@ -45,15 +45,16 @@ export default function Timeline(
     time, setTime, upsertMode, upsertEvent,
   }:
   {
-    time: number
-    setTime: (time: number) => void
-    upsertMode: (info: ModeInfo, delay: boolean) => void
-    upsertEvent: (info: EventInfo, delay: boolean) => void
+    time?: number
+    setTime?: (time: number) => void
+    upsertMode?: (info: ModeInfo, delay: boolean) => void
+    upsertEvent?: (info: EventInfo, delay: boolean) => void
   }
 ) {
   const {
     modes, events, duration, modeButtons, eventButtons,
   } = useContext(ConfigContext)
+  time ??= 0
   const modeColors = Object.fromEntries(
     modeButtons.map(({ label, bg }) => [label, bg])
   )
@@ -122,18 +123,20 @@ ${explanation}`
                 src={eventIcons[type]}
                 alt={type}
                 style={{ '--pos': `${at * 100 / (duration ?? 1)}%` } as React.CSSProperties}
-                onClick={() => upsertEvent(event, true)}
+                onClick={() => upsertEvent?.(event, true)}
               />
             </Tooltip>
           )
         )
       })}
-      <input
-        type="range"
-        min="0" max={duration}
-        value={time}
-        onChange={({ target: { value } }) => setTime(Number(value))}
-      />
+      {setTime && (
+        <input
+          type="range"
+          min="0" max={duration}
+          value={time}
+          onChange={({ target: { value } }) => setTime?.(Number(value))}
+        />
+      )}
     </section>
   )
 }
