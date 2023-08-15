@@ -30,6 +30,7 @@ export type EventInfo = {
 
 export type Metadata = {
   video?: string
+  captions?: string
   buttons: {
     mode?: Array<ButtonInfo>
     event?: Array<ButtonInfo>
@@ -48,6 +49,8 @@ export type ConfigContextProps = {
   setActionButtons: (buttons: Array<ButtonInfo>) => void
   videoSource?: string
   setVideoSource: (src?: string) => void
+  captions?: string
+  setCaptions: (captions?: string) => void
   modes: Array<ModeInfo>
   setModes: (ms: (prev: Array<ModeInfo>) => Array<ModeInfo>) => void
   events: Array<EventInfo>

@@ -3,7 +3,7 @@
 import JSON5 from 'json5'
 import { httpLink, readJSON5 } from '@/utils'
 import { ConfigContext } from '@/contexts/ConfigurationContext'
-import { useContext } from 'react'
+import { FormEvent, useContext } from 'react'
 import styles from './index.module.css'
 
 export default function SourceSelect(
@@ -18,43 +18,45 @@ export default function SourceSelect(
 ) {
   const { setVideoSource, setConfig } = useContext(ConfigContext)
 
+  const onSubmit = async (evt: FormEvent) => {
+    evt.preventDefault()
+    const form = evt.target as HTMLFormElement
+    let metadata
+    switch (form['source'].value) {
+      case 'ceramic': {
+      }
+      case 'file': {
+        const { files } = form.querySelector('#metafile') as HTMLInputElement
+        const [input] = Array.from(files ?? [])
+        metadata = await readJSON5(input)
+        break
+      }
+      case 'url': {
+        const { value: url } = form.querySelector('#metaurl') as HTMLInputElement
+        if(!!url) {
+          const config = await (await fetch(httpLink(url))).text()
+          metadata = JSON5.parse(config)
+        }
+        break
+      }
+      case 'video': {
+        const { value: src } = form.querySelector('#video') as HTMLInputElement
+        setVideoSource(src)
+        break
+      }
+    }
+    if(metadata) setConfig(metadata)
+  }
+
   return (
     <main id={styles.fileselect}>
-      <img src="/banner.svg" alt="Serial Pairs" />
-      <form
-        onSubmit={async (evt) => {
-          evt.preventDefault()
-          const form = evt.target as HTMLFormElement
-          let metadata
-          switch (form['source'].value) {
-            case 'ceramic': {
-            }
-            case 'file': {
-              const { files } = form.querySelector('#metafile') as HTMLInputElement
-              const [input] = Array.from(files ?? [])
-              metadata = await readJSON5(input)
-              break
-            }
-            case 'url': {
-              const { value: url } = form.querySelector('#metaurl') as HTMLInputElement
-              if(!!url) {
-                const config = await (await fetch(httpLink(url))).text()
-                metadata = JSON5.parse(config)
-              }
-              break
-            }
-            case 'video': {
-              const { value: src } = form.querySelector('#video') as HTMLInputElement
-              setVideoSource(src)
-              break
-            }
-          }
-          if(metadata) setConfig(metadata)
-        }}
-      >
+      <h1>Video Evaluation</h1>
+      <img src="/banner.svg" alt="Serial Pairs"/>
+      <h2>Choose The Video Source</h2>
+      <form {...{ onSubmit }}>
         <fieldset>
           <label>
-            <input type="radio" name="source" value="file" />
+            <input type="radio" name="source" value="file"/>
           </label>
           <label>
             <span>Enter a metadata file:</span>
@@ -64,11 +66,14 @@ export default function SourceSelect(
         <div>or</div>
         <fieldset>
           <label>
-            <input type="radio" name="source" value="url" defaultChecked />
+            <input type="radio" name="source" value="url" defaultChecked/>
           </label>
           <label>
             <span>Enter a metadata URL:</span>
-            <input id="metaurl" defaultValue="ipfs://bafybeihavkdijdwgzivpr6ieieggv4tphjqkciok4xsd6pul7nvvno375q/video_config.2023-06-28T06_46_34.405Z.json5" />
+            <input
+              id="metaurl"
+              defaultValue="ipfs://bafybeifzy3qmre6rituxikmxqhq7jqgmj4whei3vsjq7hbd7dndu6eg3w4/video_config.2023-08-08.json5"
+            />
           </label>
         </fieldset>
         <div>or</div>

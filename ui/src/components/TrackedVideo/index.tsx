@@ -10,7 +10,7 @@ export const TrackedVideo = forwardRef(
     { setTime }: { setTime: (t: number) => void },
     video: ForwardedRef<HTMLVideoElement>,
   ) => {
-    const { videoSource, setDuration } = useContext(ConfigContext)
+    const { videoSource, captions, setDuration } = useContext(ConfigContext)
     useEffect(() => {
       const elem = (video as MutableRefObject<HTMLVideoElement>)?.current
       const update = () => {
@@ -23,7 +23,12 @@ export const TrackedVideo = forwardRef(
     useEffect(() => {
       const elem = (video as MutableRefObject<HTMLVideoElement>)?.current
       const loaded = () => {
-        if(elem) setDuration(elem.duration)
+        if(elem) {
+          setDuration(elem.duration)
+          if(elem.textTracks[0]) {
+            elem.textTracks[0].mode = 'showing'
+          }
+        }
       }
       elem?.addEventListener('loadedmetadata', loaded)
 
@@ -31,11 +36,12 @@ export const TrackedVideo = forwardRef(
     }, [setDuration, video])
 
     return (
-      <video className={styles.video} controls ref={video}>
+      <video className={styles.video} controls ref={video} crossOrigin="anonymous">
         <source
           src={httpLink(videoSource)}
           type={`video/${videoSource?.replace(/.*\./, '')}`}
         />
+        {captions && <track kind="captions" default src={httpLink(captions)}/>}
       </video>
     )
   }

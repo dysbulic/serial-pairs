@@ -35,6 +35,8 @@ export const ConfigContext = createContext<ConfigContextProps>({
   setActionButtons: unimplemented,
   videoSource: undefined,
   setVideoSource: unimplemented,
+  captions: undefined,
+  setCaptions: unimplemented,
   modes: [],
   setModes: unimplemented,
   events: [],
@@ -70,13 +72,15 @@ export const ConfigProvider: React.FC<PropsWithChildren> = (
       action: setActionButtons,
     }
     const [videoSource, setVideoSource] = useState<string>()
+    const [captions, setCaptions] = useState<string>()
     const [modes, setModes] = useState<Array<ModeInfo>>([])
     const [events, setEvents] = useState<Array<EventInfo>>([])
     const [duration, setDuration] = useState<number>()
 
     const setConfig = (config: Metadata) => {
-      const { video: videoSource, buttons, modes, events } = config
+      const { video: videoSource, captions, buttons, modes, events } = config
       if(videoSource) setVideoSource(videoSource)
+      if(captions) setCaptions(captions)
       Object.entries(buttons).forEach(
         ([type, list]: [string, Array<ButtonInfo>]) => {
           if(type in setButtons) {
@@ -100,6 +104,7 @@ export const ConfigProvider: React.FC<PropsWithChildren> = (
     const resetConfig = () => {
       Object.values(setButtons).forEach((setter) => setter([]))
       setVideoSource(undefined)
+      setCaptions(undefined)
       setModes([])
       setEvents([])
       setDuration(undefined)
@@ -111,6 +116,7 @@ export const ConfigProvider: React.FC<PropsWithChildren> = (
         eventButtons, setEventButtons,
         actionButtons, setActionButtons,
         videoSource, setVideoSource,
+        captions, setCaptions,
         modes, setModes,
         events, setEvents,
         duration, setDuration,
