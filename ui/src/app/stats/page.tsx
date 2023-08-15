@@ -45,8 +45,6 @@ export default function Statistics() {
     acc + (blockWeights[name] ? duration * blockWeights[name] : 0)
   ), 0)
 
-
-
   const eventTotals: Record<string, number> = {}
   events.forEach((event) => {
     if (event.event) {
@@ -70,8 +68,8 @@ export default function Statistics() {
           </tr>
         </thead>
         <tbody>
-        {Object.entries(blockTotals).map(([name, duration]) => (
-            <tr>
+          {Object.entries(blockTotals).map(([name, duration]) => (
+            <tr key={name}>
               <td>{name}</td>
               <td>{(duration / 60).toFixed(1)} minutes</td>
               <td>
@@ -101,8 +99,8 @@ export default function Statistics() {
           </tr>
         </thead>
         <tbody>
-        {Object.entries(eventTotals).map(([name, count]) => (
-            <tr>
+          {Object.entries(eventTotals).map(([name, count]) => (
+            <tr key={name}>
               <td>{name}</td>
               <td>{count}</td>
               <td>
@@ -128,5 +126,4 @@ export default function Statistics() {
       </section>
     </main>
   )
-
 }
