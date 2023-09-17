@@ -1,6 +1,6 @@
 "use client"
 
-import { useContext, useRef, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import FoldingMenu from '@/components/FoldingMenu'
 import TrackedVideo from '@/components/TrackedVideo'
 import ModeDialog from '@/components/ModeDialog'
@@ -8,7 +8,7 @@ import Timeline from '@/components/Timeline'
 import EventDialog from '@/components/EventDialog'
 import SourceSelect from '@/components/SourceSelect'
 import styles from './page.module.css'
-import { ConfigContext, ConfigProvider } from '@/contexts/ConfigurationContext'
+import { ConfigContext }        from '@/contexts/ConfigurationContext'
 import { EventInfo, ModeInfo } from '@/types'
 
 // export const metadata = {
@@ -19,7 +19,6 @@ import { EventInfo, ModeInfo } from '@/types'
 export default function Home() {
   const [modeOpen, setModeOpen] = useState(false)
   const [eventOpen, setEventOpen] = useState(false)
-  const [showStatitics, setShowStatitics] = useState(false)
   const [time, setTime] = useState(0)
   const [activeMode, setActiveMode] = useState<ModeInfo>()
   const [activeEvent, setActiveEvent] = useState<EventInfo>()
@@ -33,9 +32,6 @@ export default function Home() {
     modeButtons, eventButtons, actionButtons,
     videoSource, setModes, setEvents,
   } = useContext(ConfigContext)
-  // const { connector: activeConnector, isConnected } = useAccount()
-  // const { connect, connectors, error, isLoading, pendingConnector } =
-  //   useConnect()
 
   if(!videoSource) {
     return <SourceSelect/>
@@ -95,27 +91,30 @@ export default function Home() {
   return (
     <main className={styles.main}>
       <section className={styles.top}>
-        <aside className={styles.sidebar}>
+        <menu className={styles.sidebar}>
           <FoldingMenu
-            label="Mode"
+            label={<span><span className="underline">M</span>ode</span>}
             icon="/lens.svg"
             buttons={modeButtons}
             onSelect={modeChanged}
+            hotkey="m"
           />
           <FoldingMenu
-            label="Event"
+            label={<span><span className="underline">E</span>vent</span>}
             icon="/gavel.svg"
             buttons={eventButtons}
             onSelect={eventSelected}
             elemStyle={{ '--fg': 'black' } as React.CSSProperties}
+            hotkey="e"
           />
           <FoldingMenu
-            label="Action"
+            label={<span><span className="underline">A</span>ction</span>}
             icon="/actions.svg"
             buttons={actionButtons}
             elemStyle={{ '--fg': 'black' } as React.CSSProperties}
+            hotkey="a"
           />
-        </aside>
+        </menu>
         <TrackedVideo {...{ setTime }} ref={video}/>
         {activeMode && (
           <ModeDialog

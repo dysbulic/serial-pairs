@@ -1,7 +1,7 @@
-import './globals.css'
-import 'tippy.js/dist/tippy.css'
 import { Inter } from 'next/font/google'
 import ConfigWrapped from '@/contexts/ConfigWrapped'
+import 'tippy.js/dist/tippy.css'
+import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
 

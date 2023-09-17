@@ -4,7 +4,7 @@ import Link from "next/link"
 import { FormEvent, useContext, useState } from "react"
 import { ConfigContext } from "@/contexts/ConfigurationContext"
 import { ButtonInfo, Maybe } from "@/types"
-import styles from './index.module.css'
+import styles from './page.module.css'
 
 const ButtonForm = (
   { buttons: incoming, submit }:

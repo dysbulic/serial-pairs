@@ -25,7 +25,7 @@ export default function EventDialog(
   const [explanation, setExplanation] = useState('')
   const dialogRef = useRef<HTMLDialogElement>(null)
   const { eventButtons } = useContext(ConfigContext)
-  const { icon } = eventButtons.find((b) => b.label === type) ?? {}
+  const { icon, bg } = eventButtons.find((b) => b.label === type) ?? {}
   const types = eventButtons.map(({ label }) => label)
 
   useEffect(() => {
@@ -73,7 +73,7 @@ export default function EventDialog(
     <dialog
       ref={dialogRef}
       className={general.dialog}
-      style={{ '--bg': '#000000DD' } as React.CSSProperties}
+      style={{ '--bg': bg } as React.CSSProperties}
     >
       <header>
         {icon && <Icon src={icon}/>}

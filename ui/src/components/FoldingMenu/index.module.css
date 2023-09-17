@@ -69,12 +69,14 @@
 
 .picButton {
   display: inline-block;
+  position: relative;
   background-color: var(--bg);
   min-width: 8ch;
   border-radius: 10%;
   padding: 0.5rem;
   cursor: pointer;
   border: 5px ridge color-mix(in srgb, var(--bg) 100%, black);
+  margin-inline-start: 3.5rem;
 
   &:hover {
     filter: brightness(1.2);
@@ -99,5 +101,12 @@
     text-align: center;
     color: var(--fg);
     margin-block: 0
+  }
+
+  & .index {
+    position: absolute;
+    top: 0rem;
+    left: 0rem;
+    border-radius: 0.25rem;
   }
 }

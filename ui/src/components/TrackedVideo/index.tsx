@@ -11,6 +11,7 @@ export const TrackedVideo = forwardRef(
     video: ForwardedRef<HTMLVideoElement>,
   ) => {
     const { videoSource, captions, setDuration } = useContext(ConfigContext)
+
     useEffect(() => {
       const elem = (video as MutableRefObject<HTMLVideoElement>)?.current
       const update = () => {
@@ -20,6 +21,7 @@ export const TrackedVideo = forwardRef(
 
       return () => elem?.removeEventListener('timeupdate', update)
     }, [setTime, video])
+
     useEffect(() => {
       const elem = (video as MutableRefObject<HTMLVideoElement>)?.current
       const loaded = () => {
@@ -33,6 +35,24 @@ export const TrackedVideo = forwardRef(
       elem?.addEventListener('loadedmetadata', loaded)
 
       return () => elem?.removeEventListener('loadedmetadata', loaded)
+    }, [setDuration, video])
+
+    useEffect(() => {
+      const elem = (video as MutableRefObject<HTMLVideoElement>)?.current
+      const keylisten = (e: KeyboardEvent) => {
+        if(elem) {
+          if(e.key === ' ') {
+            if(elem.paused) {
+              elem.play()
+            } else {
+              elem.pause()
+            }
+          }
+        }
+      }
+      elem?.addEventListener('keypress', keylisten)
+
+      return () => elem?.removeEventListener('keypress', keylisten)
     }, [setDuration, video])
 
     return (

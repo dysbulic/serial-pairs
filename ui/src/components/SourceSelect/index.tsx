@@ -86,6 +86,15 @@ export default function SourceSelect(
             <input id="video" />
           </label>
         </fieldset>
+        <div>or</div>
+        <fieldset>
+          <label>
+            <input type="radio" name="source" value="new" />
+          </label>
+          <label>
+            <span>Track a new video session</span>
+          </label>
+        </fieldset>
         <div><button autoFocus>Load</button></div>
       </form>
     </main>

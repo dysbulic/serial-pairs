@@ -7,6 +7,12 @@
 
   & a {
     position: fixed;
+    left: 25vw;
+    font-size: 2rem;
+    
+    &:hover {
+      color: red;
+    }
   }
 }
 

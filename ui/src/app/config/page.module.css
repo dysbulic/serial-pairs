@@ -19,6 +19,14 @@
     & > button {
       flex-grow: 1;
     }
+
+    & a {
+      font-size: 2rem;
+
+      &:hover {
+        color: red;
+      }
+    }
   }
 
   & #file {
